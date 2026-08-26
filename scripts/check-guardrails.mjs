@@ -16,14 +16,23 @@ const srcDir = resolve(root, 'src')
 const walk = (dir) =>
   readdirSync(dir).flatMap((entry) => {
     const full = join(dir, entry)
-    return statSync(full).isDirectory() ? walk(full) : [full]
+    return statSync(full).isDirectory()
+      ? walk(full)
+      : [
+          full
+        ]
   })
 
 const files = walk(srcDir).filter((file) => /\.(tsx?|css)$/.test(file))
 
 const problems = []
 const report = (file, line, rule, detail) =>
-  problems.push({ file: relative(root, file), line, rule, detail })
+  problems.push({
+    file: relative(root, file),
+    line,
+    rule,
+    detail
+  })
 
 for (const file of files) {
   // tokens.css is generated from geoh's theme and is the one place literal
@@ -41,12 +50,22 @@ for (const file of files) {
     if (!isTokens) {
       const hex = text.match(/#[0-9a-fA-F]{3,8}\b/)
       if (hex) {
-        report(file, line, 'no-literal-colors', `${hex[0]} — use a var(--web-…) token from tokens.css instead. Literal hex is why the old prototype had 501 of them and no working theme.`)
+        report(
+          file,
+          line,
+          'no-literal-colors',
+          `${hex[0]} — use a var(--web-…) token from tokens.css instead. Literal hex is why the old prototype had 501 of them and no working theme.`
+        )
       }
     }
 
     if (text.includes('!important')) {
-      report(file, line, 'no-important', 'Restyle the component instead. `!important` chains are how the old prototype ended up with 41 of them fighting generated markup.')
+      report(
+        file,
+        line,
+        'no-important',
+        'Restyle the component instead. `!important` chains are how the old prototype ended up with 41 of them fighting generated markup.'
+      )
     }
 
     // main.tsx's `getElementById('root')` is React's mount point — the one DOM
@@ -54,7 +73,12 @@ for (const file of files) {
     const isMountLookup = file.endsWith('src/main.tsx') && text.includes("getElementById('root')")
 
     if (!isMountLookup && /document\.(querySelector|getElementById|getElementsBy)/.test(text)) {
-      report(file, line, 'no-dom-surgery', 'Reach for props or state. Direct DOM reads/writes against React are unmaintainable — the old prototype rewrote nav labels this way.')
+      report(
+        file,
+        line,
+        'no-dom-surgery',
+        'Reach for props or state. Direct DOM reads/writes against React are unmaintainable — the old prototype rewrote nav labels this way.'
+      )
     }
 
     if (/\.(textContent|innerHTML)\s*=/.test(text)) {
@@ -79,8 +103,12 @@ for (const file of files) {
       // Only `display` is at risk; placement properties don't collide.
       const block = lines.slice(index, index + 6).join(' ')
       if (/display\s*:/.test(block.split('}')[0])) {
-        report(shellPath, index + 1, 'layout-display-specificity',
-          `${selector[1]} sets \`display\` unqualified — write \`.layout ${selector[1]}\` so it outranks the component rule later in the file.`)
+        report(
+          shellPath,
+          index + 1,
+          'layout-display-specificity',
+          `${selector[1]} sets \`display\` unqualified — write \`.layout ${selector[1]}\` so it outranks the component rule later in the file.`
+        )
       }
     }
   })

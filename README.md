@@ -6,8 +6,9 @@ Mock a screen, get a shareable link, hand developers something more precise than
 a Figma frame. No API, no auth, no external services.
 
 ```bash
-npm install
-npm run dev
+corepack enable   # once per machine — pins yarn to the version in package.json
+yarn install
+yarn dev
 ```
 
 ## What you get for free
@@ -20,7 +21,7 @@ nav-row states, its three breakpoints, and the full navigation tree (13 groups,
 ## Adding a screen
 
 ```bash
-npm run new:screen /broadcast-studio SuperAdmin GrAnnounce
+yarn new:screen /broadcast-studio SuperAdmin GrAnnounce
 ```
 
 One file in `src/screens/`:
@@ -50,9 +51,19 @@ Every view is a URL, persona included:
 
 | | |
 |---|---|
-| `npm run dev` | dev server |
-| `npm run check` | types + guardrails |
-| `npm run new:screen <path> [group] [icon]` | scaffold a screen |
-| `npm run gen:tokens ~/Work/geoh` | regenerate design tokens from geoh |
+| `yarn dev` | dev server |
+| `yarn check` | types + guardrails |
+| `yarn new:screen <path> [group] [icon]` | scaffold a screen |
+| `yarn gen:tokens ~/Work/geoh` | regenerate design tokens from geoh |
+| `yarn fix` | apply Biome's formatting and safe lint fixes |
+
+## Tooling
+
+Yarn 4 (Corepack-pinned, `node_modules` linker) and Biome for lint + format —
+the same toolchain geoh uses, with its formatting conventions: single quotes,
+no semicolons, 2-space indent, 160-column lines.
+
+Package versions are current rather than matched to geoh's, so this repo runs
+React 19, React Router 7, Vite 8 and TypeScript 7.
 
 Contributors: read [CLAUDE.md](./CLAUDE.md).

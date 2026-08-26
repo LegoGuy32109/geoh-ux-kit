@@ -17,7 +17,11 @@ const PersonaContext = createContext<PersonaContextValue | null>(null)
 
 const holds = (held: Array<string> | '*', gate: Gate): boolean => {
   if (held === '*') return true
-  const needed = Array.isArray(gate) ? gate : [gate]
+  const needed = Array.isArray(gate)
+    ? gate
+    : [
+        gate
+      ]
   return needed.some((key) => held.includes(key))
 }
 
@@ -31,9 +35,14 @@ export const PersonaProvider = ({ children }: { children: ReactNode }) => {
     (key: string) => {
       const next = new URLSearchParams(params)
       next.set('as', key)
-      setParams(next, { replace: true })
+      setParams(next, {
+        replace: true
+      })
     },
-    [params, setParams]
+    [
+      params,
+      setParams
+    ]
   )
 
   const value = useMemo<PersonaContextValue>(
@@ -44,7 +53,10 @@ export const PersonaProvider = ({ children }: { children: ReactNode }) => {
       can: (permission) => holds(persona.permissions, permission),
       hasFeature: (feature) => holds(persona.features, feature)
     }),
-    [persona, setPersona]
+    [
+      persona,
+      setPersona
+    ]
   )
 
   return <PersonaContext.Provider value={value}>{children}</PersonaContext.Provider>

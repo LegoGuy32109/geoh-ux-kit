@@ -4,5 +4,11 @@ dist-ssr
 *.log
 .DS_Store
 
+# Yarn: the lockfile is committed; the cache and install state are not.
+# The yarn version comes from package.json's `packageManager` via Corepack,
+# so there is no release binary to track.
+.yarn/*
+.pnp.*
+
 # machine-local Claude permissions, not shared
 .claude/settings.local.json

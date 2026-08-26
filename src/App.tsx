@@ -16,14 +16,13 @@ const Shell = () => {
   const { pathname } = useLocation()
   // An unmocked route still has a real nav entry, so title from that rather
   // than the app name — the toolbar matches the row that was clicked.
-  const title =
-    SCREENS.find((screen) => screen.path === pathname)?.title ??
-    allNavDestinations().find((item) => item.to === pathname)?.label ??
-    'GeoH UX Kit'
+  const title = SCREENS.find((screen) => screen.path === pathname)?.title ?? allNavDestinations().find((item) => item.to === pathname)?.label ?? 'GeoH UX Kit'
 
   useEffect(() => {
     document.title = `${title} · GeoH UX Kit`
-  }, [title])
+  }, [
+    title
+  ])
 
   return (
     <Layout title={title}>

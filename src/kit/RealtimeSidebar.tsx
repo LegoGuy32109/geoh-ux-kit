@@ -15,10 +15,34 @@ export type RealtimeTab = 'activity' | 'messaging' | 'events'
  * Expanded the toolbar turns horizontal and a panel opens beneath it. The
  * counts are fixture values — this is chrome for a prototype, not a live feed.
  */
-const TABS: Array<{ key: RealtimeTab; icon: typeof RiHistoryLine; count: number; color: string; label: string }> = [
-  { key: 'activity', icon: RiHistoryLine, count: 8, color: 'var(--web-primary-color)', label: 'Activity' },
-  { key: 'messaging', icon: BiMessageSquareDetail, count: 2, color: 'var(--web-error-color)', label: 'Messages' },
-  { key: 'events', icon: HiOutlineBell, count: 1, color: 'var(--web-midnight-blue-color)', label: 'Notifications' }
+const TABS: Array<{
+  key: RealtimeTab
+  icon: typeof RiHistoryLine
+  count: number
+  color: string
+  label: string
+}> = [
+  {
+    key: 'activity',
+    icon: RiHistoryLine,
+    count: 8,
+    color: 'var(--web-primary-color)',
+    label: 'Activity'
+  },
+  {
+    key: 'messaging',
+    icon: BiMessageSquareDetail,
+    count: 2,
+    color: 'var(--web-error-color)',
+    label: 'Messages'
+  },
+  {
+    key: 'events',
+    icon: HiOutlineBell,
+    count: 1,
+    color: 'var(--web-midnight-blue-color)',
+    label: 'Notifications'
+  }
 ]
 
 export type RealtimeSidebarProps = {
@@ -53,7 +77,12 @@ export const RealtimeSidebar = ({ className, layout, tab, onTabChange }: Realtim
             >
               <item.icon size={ICON_MEDIUM} />
               {item.count > 0 && (
-                <span className='realtime__badge' style={{ background: item.color }}>
+                <span
+                  className='realtime__badge'
+                  style={{
+                    background: item.color
+                  }}
+                >
                   {item.count}
                 </span>
               )}

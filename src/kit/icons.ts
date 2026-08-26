@@ -42,16 +42,7 @@ import {
   RiUserLocationLine,
   RiUserStarLine
 } from 'react-icons/ri'
-import {
-  TbBuildingBank,
-  TbChecklist,
-  TbIdBadge2,
-  TbPlug,
-  TbReceiptDollar,
-  TbReportMoney,
-  TbUserSearch,
-  TbZoomCode
-} from 'react-icons/tb'
+import { TbBuildingBank, TbChecklist, TbIdBadge2, TbPlug, TbReceiptDollar, TbReportMoney, TbUserSearch, TbZoomCode } from 'react-icons/tb'
 import { TiFolder } from 'react-icons/ti'
 
 // --- Icons for prototype-only screens ------------------------------------

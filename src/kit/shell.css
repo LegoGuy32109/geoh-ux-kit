@@ -21,7 +21,7 @@ body,
 }
 
 body {
-  font-family: 'Montserrat', system-ui, sans-serif;
+  font-family: "Montserrat", system-ui, sans-serif;
   font-size: var(--web-text-size-regular);
   color: var(--web-text-color);
   background: var(--web-global-background-color);
@@ -61,8 +61,8 @@ a {
     var(--web-realtime-sidebar-min-width);
   grid-template-rows: var(--web-top-bar-height) minmax(0, 1fr);
   grid-template-areas:
-    'logo-min logo    header  options  user-min'
-    'sidebar-min sidebar content realtime realtime-min';
+    "logo-min logo    header  options  user-min"
+    "sidebar-min sidebar content realtime realtime-min";
 }
 
 .layout__logo {
@@ -156,7 +156,7 @@ a {
  */
 
 @media (max-width: 1024px) {
-  .layout__content {
+  .layout .layout__content {
     grid-column: sidebar / realtime;
   }
 
@@ -236,12 +236,12 @@ a {
     grid-row: realtime;
   }
 
-  .layout__realtime {
+  .layout .layout__realtime {
     grid-column: sidebar / realtime-min;
     grid-row: sidebar / realtime-min;
   }
 
-  .layout__content {
+  .layout .layout__content {
     grid-column: sidebar-min / realtime-min;
     grid-row: sidebar-min / realtime-min;
   }
@@ -399,7 +399,7 @@ a {
   flex-shrink: 0;
   border-radius: 50%;
   color: var(--web-text-inverse-color);
-  font-family: 'Montserrat', system-ui, sans-serif;
+  font-family: "Montserrat", system-ui, sans-serif;
   font-weight: 500;
 }
 
@@ -480,11 +480,6 @@ a {
   min-width: 0;
 }
 
-.sidebar--collapsed .org__text,
-.sidebar--collapsed .org__caret {
-  display: none;
-}
-
 .org__agency {
   font-size: 12px;
   color: var(--web-text-color);
@@ -506,6 +501,13 @@ a {
   color: var(--web-icon-dark-color);
   display: flex;
   align-items: center;
+}
+
+/* Collapsed overrides come after the rules they override, so the cascade reads
+   top-to-bottom instead of relying on specificity to win backwards. */
+.sidebar--collapsed .org__text,
+.sidebar--collapsed .org__caret {
+  display: none;
 }
 
 /* -- group switcher ------------------------------------------------------- */
@@ -536,11 +538,6 @@ a {
   color: var(--web-text-color);
 }
 
-.sidebar--collapsed .group-switch__label,
-.sidebar--collapsed .group-switch__caret {
-  display: none;
-}
-
 .group-switch__value {
   color: var(--web-text-emphasis-color);
   white-space: nowrap;
@@ -559,6 +556,12 @@ a {
   display: flex;
   align-items: center;
   color: var(--web-icon-dark-color);
+}
+
+/* Collapsed overrides last, as above. */
+.sidebar--collapsed .group-switch__label,
+.sidebar--collapsed .group-switch__caret {
+  display: none;
 }
 
 /* -- nav rows ------------------------------------------------------------- */

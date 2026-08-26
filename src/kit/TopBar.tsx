@@ -31,15 +31,7 @@ export const SearchBar = ({ className }: { className?: string }) => (
  * "Viewing as" — the shape the Broadcast Studio prototype settled on after
  * trying two separate URLs. Writes `?as=` so a perspective stays linkable.
  */
-export const PersonaSwitch = ({
-  persona,
-  onPersonaChange,
-  compact
-}: {
-  persona: Persona
-  onPersonaChange: (key: string) => void
-  compact?: boolean
-}) => (
+export const PersonaSwitch = ({ persona, onPersonaChange, compact }: { persona: Persona; onPersonaChange: (key: string) => void; compact?: boolean }) => (
   <div className={`segmented${compact === true ? ' segmented--compact' : ''}`}>
     {PERSONAS.map((option) => (
       <button
@@ -54,15 +46,7 @@ export const PersonaSwitch = ({
   </div>
 )
 
-export const OptionsBar = ({
-  className,
-  persona,
-  onPersonaChange
-}: {
-  className?: string
-  persona: Persona
-  onPersonaChange: (key: string) => void
-}) => (
+export const OptionsBar = ({ className, persona, onPersonaChange }: { className?: string; persona: Persona; onPersonaChange: (key: string) => void }) => (
   <div className={`${className ?? ''} options-bar`}>
     <PersonaSwitch persona={persona} onPersonaChange={onPersonaChange} />
   </div>
@@ -74,7 +58,15 @@ export const OptionsBar = ({
  */
 export const UserBar = ({ className, persona }: { className?: string; persona: Persona }) => (
   <div className={`${className ?? ''} user-bar`}>
-    <span className='avatar' style={{ background: persona.avatarColor, width: 35, height: 35, fontSize: 13 }}>
+    <span
+      className='avatar'
+      style={{
+        background: persona.avatarColor,
+        width: 35,
+        height: 35,
+        fontSize: 13
+      }}
+    >
       {persona.initials}
       <span className='avatar__caret'>
         <MdArrowDropDown size={17} />
@@ -88,15 +80,7 @@ export const UserBar = ({ className, persona }: { className?: string; persona: P
  * collapses at that width, so the persona switch moves in here rather than
  * disappearing — a reviewer on a phone still needs both perspectives.
  */
-export const MobileHeader = ({
-  className,
-  persona,
-  onPersonaChange
-}: {
-  className?: string
-  persona: Persona
-  onPersonaChange: (key: string) => void
-}) => (
+export const MobileHeader = ({ className, persona, onPersonaChange }: { className?: string; persona: Persona; onPersonaChange: (key: string) => void }) => (
   <div className={`${className ?? ''} mobile-header`}>
     <MdSearch size={ICON_MEDIUM} color='var(--web-icon-dark-color)' />
     <span className='mobile-header__spacer' />

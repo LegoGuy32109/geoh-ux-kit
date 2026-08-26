@@ -38,26 +38,33 @@ type ScreenModule = {
   meta?: ScreenMeta
 }
 
-const modules = import.meta.glob<ScreenModule>('../screens/**/*.tsx', { eager: true })
+const modules = import.meta.glob<ScreenModule>('../screens/**/*.tsx', {
+  eager: true
+})
 
 export const SCREENS: Array<Screen> = Object.entries(modules)
   .map(([file, module]) => {
     if (module.meta === undefined) {
-      throw new Error(
-        `${file} is in src/screens/ but exports no \`meta\`. Add:\n` +
-          `  export const meta = { path: '/some/path', title: 'Some Title' }`
-      )
+      throw new Error(`${file} is in src/screens/ but exports no \`meta\`. Add:\n  export const meta = { path: '/some/path', title: 'Some Title' }`)
     }
     if (!module.meta.path.startsWith('/')) {
       throw new Error(`${file} has meta.path '${module.meta.path}' — paths must start with '/'.`)
     }
-    return { ...module.meta, Component: module.default, file: file.replace('../', 'src/') }
+    return {
+      ...module.meta,
+      Component: module.default,
+      file: file.replace('../', 'src/')
+    }
   })
   .sort((a, b) => a.path.localeCompare(b.path))
 
 const duplicates = SCREENS.map((s) => s.path).filter((path, i, all) => all.indexOf(path) !== i)
 if (duplicates.length > 0) {
-  throw new Error(`Two screens claim the same path: ${[...new Set(duplicates)].join(', ')}`)
+  throw new Error(
+    `Two screens claim the same path: ${[
+      ...new Set(duplicates)
+    ].join(', ')}`
+  )
 }
 
 export const MOCKED_PATHS = new Set(SCREENS.map((s) => s.path))

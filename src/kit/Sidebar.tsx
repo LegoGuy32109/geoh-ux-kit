@@ -31,7 +31,11 @@ const NavRow = ({ item, collapsed, submenu, active, onClick, to, actionIcon, onN
   // Every row that has a destination is a real link, whether or not a screen
   // exists behind it — so the sidebar reads exactly like the portal's. Rows
   // with no screen land on NotFound, which names the command that builds one.
-  const className = ['nav-row', submenu ? 'nav-row--submenu' : '', active ? 'nav-row--active' : '']
+  const className = [
+    'nav-row',
+    submenu ? 'nav-row--submenu' : '',
+    active ? 'nav-row--active' : ''
+  ]
     .filter(Boolean)
     .join(' ')
 
@@ -105,15 +109,7 @@ const NavGroup = ({
   const collapsed = layout.sidebarCollapsed
 
   if (group.items === undefined) {
-    return (
-      <NavRow
-        item={group}
-        to={group.to}
-        collapsed={collapsed}
-        active={isActive(group, pathname)}
-        onNavigate={onNavigate}
-      />
-    )
+    return <NavRow item={group} to={group.to} collapsed={collapsed} active={isActive(group, pathname)} onNavigate={onNavigate} />
   }
 
   const routeActive = isGroupActive(group, pathname)
@@ -122,7 +118,14 @@ const NavGroup = ({
   return (
     <div className={open ? 'nav-group nav-group--open' : 'nav-group'}>
       <NavRow
-        item={open && !collapsed ? { ...group, action: undefined } : group}
+        item={
+          open && !collapsed
+            ? {
+                ...group,
+                action: undefined
+              }
+            : group
+        }
         collapsed={collapsed}
         active={routeActive && (collapsed || (layout.isMobile && !open))}
         to={layout.isMobile ? undefined : groupTarget(group)}
@@ -132,15 +135,7 @@ const NavGroup = ({
       />
       {open &&
         group.items.map((child) => (
-          <NavRow
-            key={child.key}
-            item={child}
-            to={child.to}
-            collapsed={collapsed}
-            submenu
-            active={isActive(child, pathname)}
-            onNavigate={onNavigate}
-          />
+          <NavRow key={child.key} item={child} to={child.to} collapsed={collapsed} submenu active={isActive(child, pathname)} onNavigate={onNavigate} />
         ))}
     </div>
   )
@@ -163,7 +158,12 @@ export const Sidebar = ({ className, persona, layout, openKey, onToggleGroup }: 
   return (
     <div className={`${className ?? ''} sidebar${collapsed ? ' sidebar--collapsed' : ''}`} data-testid='sidebar'>
       <div className='org'>
-        <span className='avatar org__avatar' style={{ background: persona.avatarColor }}>
+        <span
+          className='avatar org__avatar'
+          style={{
+            background: persona.avatarColor
+          }}
+        >
           {persona.initials}
         </span>
         <span className='org__text'>
@@ -188,18 +188,19 @@ export const Sidebar = ({ className, persona, layout, openKey, onToggleGroup }: 
 
       <div className='sidebar__scroll'>
         {visibleNav(persona).map((group) => (
-          <NavGroup
-            key={group.key}
-            group={group}
-            layout={layout}
-            openKey={openKey}
-            onToggle={onToggleGroup}
-            onNavigate={onNavigate}
-          />
+          <NavGroup key={group.key} group={group} layout={layout} openKey={openKey} onToggle={onToggleGroup} onNavigate={onNavigate} />
         ))}
 
         {/* geoh pins a Help link to the bottom of the nav list. */}
-        <NavRow item={{ key: 'help', label: 'Help', icon: 'MdSupportAgent' }} collapsed={collapsed} active={false} />
+        <NavRow
+          item={{
+            key: 'help',
+            label: 'Help',
+            icon: 'MdSupportAgent'
+          }}
+          collapsed={collapsed}
+          active={false}
+        />
       </div>
 
       <div className='sidebar__version'>

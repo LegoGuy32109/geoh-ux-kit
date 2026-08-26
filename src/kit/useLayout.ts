@@ -7,9 +7,16 @@ import { useEffect, useState } from 'react'
 export type Breakpoint = 'min' | 'mid' | 'max'
 
 export const BREAKPOINTS = {
-  min: { max: 640 },
-  mid: { min: 641, max: 1024 },
-  max: { min: 1025 }
+  min: {
+    max: 640
+  },
+  mid: {
+    min: 641,
+    max: 1024
+  },
+  max: {
+    min: 1025
+  }
 } as const
 
 const currentBreakpoint = (): Breakpoint => {
@@ -64,7 +71,9 @@ export const useLayout = (): LayoutState => {
   useEffect(() => {
     setSidebarVisible(breakpoint === 'max')
     setRealtimeVisible(false)
-  }, [breakpoint])
+  }, [
+    breakpoint
+  ])
 
   const isMobile = breakpoint === 'min' || breakpoint === 'mid'
 

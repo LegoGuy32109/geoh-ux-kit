@@ -42,5 +42,4 @@ export const PERSONAS: Array<Persona> = [
 
 export const DEFAULT_PERSONA = PERSONAS[0]
 
-export const findPersona = (key: string | null): Persona =>
-  PERSONAS.find((p) => p.key === key) ?? DEFAULT_PERSONA
+export const findPersona = (key: string | null): Persona => PERSONAS.find((p) => p.key === key) ?? DEFAULT_PERSONA

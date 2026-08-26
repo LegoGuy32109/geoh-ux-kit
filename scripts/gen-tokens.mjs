@@ -47,7 +47,11 @@ for (const rawLine of source.split('\n')) {
     continue
   }
 
-  entries.push([toCssVar(key), value, key])
+  entries.push([
+    toCssVar(key),
+    value,
+    key
+  ])
 }
 
 const body = entries.map(([cssVar, value]) => `  ${cssVar}: ${value};`).join('\n')

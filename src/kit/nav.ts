@@ -5,10 +5,20 @@ import type { Gate, NavFile, NavItem, Persona } from './types.ts'
 const NAV = navFile as NavFile
 
 /** Levels are ordered — holding a higher one satisfies a lower requirement. */
-const LEVEL_RANK: Record<string, number> = { Staff: 0, Admin: 1, SuperAdmin: 2 }
+const LEVEL_RANK: Record<string, number> = {
+  Staff: 0,
+  Admin: 1,
+  SuperAdmin: 2
+}
 
 const asList = (gate: Gate | undefined): Array<string> =>
-  gate === undefined ? [] : Array.isArray(gate) ? gate : [gate]
+  gate === undefined
+    ? []
+    : Array.isArray(gate)
+      ? gate
+      : [
+          gate
+        ]
 
 /** `'*'` grants everything; otherwise ANY required key is enough — matching geoh's hasPermission/hasAnyFeature. */
 const granted = (held: Array<string> | '*', required: Gate | undefined): boolean => {
@@ -42,8 +52,16 @@ const passes = (item: NavItem, persona: Persona): boolean => {
 /** Insert `entry` into `siblings`, after the item keyed `after` when given. */
 const insert = (siblings: Array<NavItem>, entry: NavItem, after: string | undefined): Array<NavItem> => {
   const index = after === undefined ? -1 : siblings.findIndex((item) => item.key === after)
-  if (index === -1) return [...siblings, entry]
-  return [...siblings.slice(0, index + 1), entry, ...siblings.slice(index + 1)]
+  if (index === -1)
+    return [
+      ...siblings,
+      entry
+    ]
+  return [
+    ...siblings.slice(0, index + 1),
+    entry,
+    ...siblings.slice(index + 1)
+  ]
 }
 
 /**
@@ -55,7 +73,12 @@ const insert = (siblings: Array<NavItem>, entry: NavItem, after: string | undefi
  */
 const mergedNav = (): Array<NavItem> => {
   // Deep-ish clone so screen-declared rows never mutate the imported JSON.
-  let items: Array<NavItem> = NAV.items.map((group) => ({ ...group, items: group.items && [...group.items] }))
+  let items: Array<NavItem> = NAV.items.map((group) => ({
+    ...group,
+    items: group.items && [
+      ...group.items
+    ]
+  }))
 
   for (const screen of SCREENS) {
     if (screen.nav === undefined) continue
@@ -81,9 +104,7 @@ const mergedNav = (): Array<NavItem> => {
     const group = items.find((item) => item.key === parent)
     if (group === undefined) {
       const known = items.map((item) => item.key).join(', ')
-      throw new Error(
-        `${screen.file}: meta.nav.parent '${parent}' is not a nav group. Available groups: ${known}`
-      )
+      throw new Error(`${screen.file}: meta.nav.parent '${parent}' is not a nav group. Available groups: ${known}`)
     }
     group.items = insert(group.items ?? [], entry, after)
   }
@@ -94,23 +115,39 @@ const mergedNav = (): Array<NavItem> => {
 /** The nav tree this persona can see. */
 export const visibleNav = (persona: Persona): Array<NavItem> =>
   mergedNav().flatMap((group) => {
-    if (group.items === undefined) return passes(group, persona) ? [group] : []
+    if (group.items === undefined)
+      return passes(group, persona)
+        ? [
+            group
+          ]
+        : []
 
     const items = group.items.filter((child) => passes(child, persona))
     if (items.length === 0) return []
-    return passes(group, persona) ? [{ ...group, items }] : []
+    return passes(group, persona)
+      ? [
+          {
+            ...group,
+            items
+          }
+        ]
+      : []
   })
 
 /** Every path this item should light up for. */
 export const routesFor = (item: NavItem): Array<string> =>
-  item.routes ?? (item.to === undefined ? [] : [item.to])
+  item.routes ??
+  (item.to === undefined
+    ? []
+    : [
+        item.to
+      ])
 
 /**
  * Active when the path equals one of the item's routes or sits beneath it. The
  * `/` guard stops `/claims/payments` from also lighting `/claims/payment-batch`.
  */
-export const isActive = (item: NavItem, pathname: string): boolean =>
-  routesFor(item).some((route) => pathname === route || pathname.startsWith(`${route}/`))
+export const isActive = (item: NavItem, pathname: string): boolean => routesFor(item).some((route) => pathname === route || pathname.startsWith(`${route}/`))
 
 export const isGroupActive = (group: NavItem, pathname: string): boolean =>
   isActive(group, pathname) || (group.items ?? []).some((child) => isActive(child, pathname))
@@ -128,5 +165,8 @@ export const groupTarget = (group: NavItem): string | undefined => {
 /** Every nav destination, flattened. */
 export const allNavDestinations = (): Array<NavItem> =>
   mergedNav()
-    .flatMap((group) => [group, ...(group.items ?? [])])
+    .flatMap((group) => [
+      group,
+      ...(group.items ?? [])
+    ])
     .filter((item) => item.to !== undefined)

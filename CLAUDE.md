@@ -26,7 +26,7 @@ Your job is only ever the content of one screen.
 ## Adding a screen
 
 ```
-npm run new:screen /broadcast-studio SuperAdmin GrAnnounce
+yarn new:screen /broadcast-studio SuperAdmin GrAnnounce
 ```
 
 That writes one file in `src/screens/`:
@@ -56,6 +56,22 @@ If the path is **already** a `to` in `nav.json` (`/clients`, `/payroll`), leave
 Rows with no screen behind them stay in the sidebar and look exactly as they do
 in the portal; clicking one lands on a page naming the command that builds it.
 
+## Tooling
+
+Yarn 4, pinned by the `packageManager` field and resolved through Corepack, so
+there is no yarn binary in the repo. `corepack enable` once per machine, then
+`yarn install`.
+
+Biome does lint and format — no ESLint, no Prettier. `biome.json` carries geoh's
+conventions: single quotes, no semicolons, 2-space indent, 160-column lines,
+no trailing commas. `yarn fix` applies them; `yarn check` runs types, Biome and
+the guardrails together.
+
+Toolchain matches geoh. Package versions deliberately do not: this repo tracks
+current releases (React 19, React Router 7, Vite 8, TypeScript 7) rather than
+geoh's pins. A prototype has no reason to inherit an older runtime, and nothing
+here is imported by the portal.
+
 ## Breakpoints
 
 geoh's, exactly — `BreakpointUtilities` in `@geoh/presentation`:
@@ -76,7 +92,7 @@ behaviour, not an invention.
 
 ## Rules
 
-`npm run check` enforces these. Each exists because its absence cost the
+`yarn check` enforces these. Each exists because its absence cost the
 Broadcast Studio prototype real time.
 
 **No literal colors.** Use `var(--web-…)` tokens from `src/kit/tokens.css`,
@@ -97,7 +113,7 @@ a media query silently loses to a later `.search-bar { display: flex }` — medi
 queries add no specificity. This shipped two wrong-breakpoint bugs before the
 check existed.
 
-**Never hand-edit `src/kit/tokens.css`.** Run `npm run gen:tokens ~/Work/geoh`
+**Never hand-edit `src/kit/tokens.css`.** Run `yarn gen:tokens ~/Work/geoh`
 and commit the diff.
 
 **Put tunable numbers in named constants** at the top of the file. When someone
@@ -136,12 +152,12 @@ the sidebar with the portal's own rules, so the tree narrows on its own.
 `@geoh/portal` 10.37.222, committed on purpose so this repo never needs a geoh
 checkout.
 
-- **tokens**: `npm run gen:tokens ~/Work/geoh`, review the diff, commit.
+- **tokens**: `yarn gen:tokens ~/Work/geoh`, review the diff, commit.
 - **nav**: diff `apps/web/src/behaviors/useSidebarBehavior.ts` against `nav.json`
   and transcribe the delta. The header comment in `nav.json` records which
   fields were dropped and why.
 
 ## Before you finish
 
-Run `npm run check`. If you changed anything visual, look at it at 1600, 958,
+Run `yarn check`. If you changed anything visual, look at it at 1600, 958,
 and 390 wide — the chrome behaves differently in each band.

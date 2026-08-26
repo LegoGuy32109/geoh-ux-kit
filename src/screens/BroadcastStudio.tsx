@@ -45,7 +45,13 @@ const COLUMNS: Array<Column> = [
     label: 'DRAFTS',
     color: 'var(--web-text-color-light)',
     messages: [
-      { id: 'd1', subject: 'Q3 Training Reminder', author: 'John Doe', dates: 'Aug 1, 2026 – Aug 8, 2026', recipients: 1750 },
+      {
+        id: 'd1',
+        subject: 'Q3 Training Reminder',
+        author: 'John Doe',
+        dates: 'Aug 1, 2026 – Aug 8, 2026',
+        recipients: 1750
+      },
       {
         id: 'd2',
         subject: 'System Outage Alert Draft',
@@ -78,7 +84,13 @@ const COLUMNS: Array<Column> = [
         dateWarning: true,
         recipients: 4300
       },
-      { id: 'p3', subject: 'Holiday Closure Notice', author: 'Priya Nair', dates: 'Sep 9, 2026 – Sep 16, 2026', recipients: 3150 },
+      {
+        id: 'p3',
+        subject: 'Holiday Closure Notice',
+        author: 'Priya Nair',
+        dates: 'Sep 9, 2026 – Sep 16, 2026',
+        recipients: 3150
+      },
       {
         id: 'p4',
         subject: 'New Mobile App Release',
@@ -95,8 +107,20 @@ const COLUMNS: Array<Column> = [
         tag: 'Emergency',
         recipients: 295
       },
-      { id: 'p6', subject: 'Fall Enrollment Campaign Kickoff', author: 'Elena Rodriguez', dates: 'Sep 20, 2026 – Oct 4, 2026', recipients: 2100 },
-      { id: 'p7', subject: 'Updated Privacy Policy', author: 'Elena Rodriguez', dates: 'Oct 1, 2026 – Until stopped', recipients: 5200 }
+      {
+        id: 'p6',
+        subject: 'Fall Enrollment Campaign Kickoff',
+        author: 'Elena Rodriguez',
+        dates: 'Sep 20, 2026 – Oct 4, 2026',
+        recipients: 2100
+      },
+      {
+        id: 'p7',
+        subject: 'Updated Privacy Policy',
+        author: 'Elena Rodriguez',
+        dates: 'Oct 1, 2026 – Until stopped',
+        recipients: 5200
+      }
     ]
   },
   {
@@ -104,7 +128,13 @@ const COLUMNS: Array<Column> = [
     label: 'APPROVED',
     color: 'var(--web-success-text-color)',
     messages: [
-      { id: 'a1', subject: 'New Wellness Program Rollout', author: 'John Doe', dates: 'Aug 20, 2026 – Until stopped', recipients: 530 }
+      {
+        id: 'a1',
+        subject: 'New Wellness Program Rollout',
+        author: 'John Doe',
+        dates: 'Aug 20, 2026 – Until stopped',
+        recipients: 530
+      }
     ]
   }
 ]
@@ -121,7 +151,13 @@ const MessageCard = ({ message }: { message: Message }) => (
       gap: 6
     }}
   >
-    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 8
+      }}
+    >
       <span
         style={{
           flex: 1,
@@ -163,7 +199,13 @@ const MessageCard = ({ message }: { message: Message }) => (
     )}
 
     {message.recipients !== undefined && (
-      <span style={{ ...metaRow, color: 'var(--web-bold-color)', fontWeight: 600 }}>
+      <span
+        style={{
+          ...metaRow,
+          color: 'var(--web-bold-color)',
+          fontWeight: 600
+        }}
+      >
         <HiOutlineUsers size={13} />
         {message.recipients} Recipients
       </span>
@@ -186,7 +228,15 @@ export default function BroadcastStudio() {
 
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          marginBottom: 24,
+          flexWrap: 'wrap'
+        }}
+      >
         <span
           style={{
             display: 'flex',
@@ -218,20 +268,64 @@ export default function BroadcastStudio() {
         )}
       </div>
 
-      <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', overflowX: 'auto', paddingBottom: 8 }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 24,
+          alignItems: 'flex-start',
+          overflowX: 'auto',
+          paddingBottom: 8
+        }}
+      >
         {columns.map((column) => (
-          <div key={column.key} style={{ flex: '1 0 300px', minWidth: 300, maxWidth: 420 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <span style={{ fontSize: 'var(--web-text-size-small)', fontWeight: 700, letterSpacing: '0.04em', color: column.color }}>
+          <div
+            key={column.key}
+            style={{
+              flex: '1 0 300px',
+              minWidth: 300,
+              maxWidth: 420
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                marginBottom: 12
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 'var(--web-text-size-small)',
+                  fontWeight: 700,
+                  letterSpacing: '0.04em',
+                  color: column.color
+                }}
+              >
                 {column.label}
               </span>
-              <span style={{ flex: 1 }} />
-              <span style={{ fontSize: 'var(--web-text-size-extra-small)', color: 'var(--web-text-color-light)' }}>
+              <span
+                style={{
+                  flex: 1
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 'var(--web-text-size-extra-small)',
+                  color: 'var(--web-text-color-light)'
+                }}
+              >
                 {column.messages.length}
               </span>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 12
+              }}
+            >
               {column.messages.map((message) => (
                 <MessageCard key={message.id} message={message} />
               ))}
