@@ -90,6 +90,26 @@ a group header navigates to its first mocked child. Below Max there is no hover
 affordance, so headers toggle and show a chevron instead. Both are geoh's
 behaviour, not an invention.
 
+## Branches and deployment
+
+Work on a `feat/` branch. Pushing one publishes it to its own URL under
+`/geoh-ux-kit/feat/<name>/`, listed on the site's landing page; deleting the
+branch removes it. `main` publishes to `/geoh-ux-kit/main/`.
+
+`.github/workflows/pages.yml` owns this. Each run writes only into its own
+subdirectory of the `gh-pages` branch, so deployments never clobber each other,
+and the landing page is regenerated from whatever is actually on that branch
+rather than from a manifest anyone has to maintain.
+
+Two things the build depends on that are easy to break:
+
+- `vite.config.ts` reads `BASE_PATH`, which the workflow sets per branch. Assets
+  and the router's basename both come from it, so hardcoding `base` breaks every
+  deployment except the root one.
+- The app uses real paths, so deep links have no file behind them. The workflow
+  copies each build's `index.html` to `404.html`, which is what makes
+  `/feat/x/broadcast-studio` work. Those links load with a 404 status by design.
+
 ## Rules
 
 `yarn check` enforces these. Each exists because its absence cost the

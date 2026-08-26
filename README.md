@@ -39,6 +39,25 @@ export default function BroadcastStudio() { … }
 Point `meta.nav` at a group and an icon and the row appears there. Click the
 megaphone, you're on the page. No nav file to edit, no router to register with.
 
+## Prototypes and branches
+
+Every branch deploys to its own URL, so several designers can each have a live
+prototype in this one repo at the same time.
+
+| branch | lands at |
+|---|---|
+| `main` | `/geoh-ux-kit/main/` |
+| `feat/broadcast-studio` | `/geoh-ux-kit/feat/broadcast-studio/` |
+
+```bash
+git switch -c feat/my-idea
+# ...build a screen...
+git push -u origin feat/my-idea
+```
+
+Pushing publishes it, and the landing page lists every live prototype
+automatically. Deleting the branch removes its deployment.
+
 ## Sharing
 
 Every view is a URL, persona included:

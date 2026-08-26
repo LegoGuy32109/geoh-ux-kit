@@ -1,0 +1,145 @@
+name: Pages
+
+# Every branch gets its own deployment under its own path, so several designers
+# can each have a live prototype in this one repo at the same time:
+#
+#   main            ->  /geoh-ux-kit/main/
+#   feat/whatever   ->  /geoh-ux-kit/feat/whatever/
+#
+# The site itself is served from the `gh-pages` branch, and each run writes only
+# into its own subdirectory there. Deleting a feat branch removes its directory.
+
+on:
+  push:
+    branches:
+      - main
+      - 'feat/**'
+  delete:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Every job commits to the same branch, so they must not overlap. Not cancelling
+# in progress: a superseded run still needs to finish its push cleanly.
+concurrency:
+  group: gh-pages-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event_name != 'delete'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install
+        run: yarn install --immutable
+
+      - name: Resolve deployment path
+        id: target
+        run: |
+          slug="${GITHUB_REF_NAME}"
+          repo="${GITHUB_REPOSITORY#*/}"
+          echo "slug=${slug}" >> "$GITHUB_OUTPUT"
+          echo "base=/${repo}/${slug}/" >> "$GITHUB_OUTPUT"
+          echo "url=https://${GITHUB_REPOSITORY_OWNER}.github.io/${repo}/${slug}/" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        env:
+          BASE_PATH: ${{ steps.target.outputs.base }}
+        run: yarn build
+
+      - name: Publish
+        env:
+          SLUG: ${{ steps.target.outputs.slug }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git fetch origin gh-pages --depth=1 || true
+          if git rev-parse --verify origin/gh-pages >/dev/null 2>&1; then
+            git worktree add site origin/gh-pages
+            git -C site checkout -B gh-pages
+          else
+            git worktree add --detach site
+            git -C site checkout --orphan gh-pages
+            git -C site rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          # Replace only this branch's directory; everyone else's stays put.
+          rm -rf "site/${SLUG}"
+          mkdir -p "site/${SLUG}"
+          cp -R dist/. "site/${SLUG}/"
+
+          # SPA fallback: the app uses real paths, so a deep link like
+          # .../broadcast-studio has no file behind it. Pages serves 404.html
+          # for those, and it boots the same app at the same URL.
+          cp "site/${SLUG}/index.html" "site/${SLUG}/404.html"
+
+          # Stop Pages running the tree through Jekyll.
+          touch site/.nojekyll
+
+          node scripts/build-preview-index.mjs site
+
+          git -C site add -A
+          if git -C site diff --cached --quiet; then
+            echo 'No change to publish.'
+          else
+            git -C site commit -m "Deploy ${SLUG} (${GITHUB_SHA::7})"
+            git -C site push origin gh-pages
+          fi
+
+      - name: Summary
+        run: echo "### Deployed → ${{ steps.target.outputs.url }}" >> "$GITHUB_STEP_SUMMARY"
+
+  cleanup:
+    # A deleted feat branch should take its prototype with it, otherwise the
+    # listing fills up with links to work nobody is doing any more.
+    if: github.event_name == 'delete' && github.event.ref_type == 'branch' && startsWith(github.event.ref, 'feat/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Remove the deleted branch's deployment
+        env:
+          SLUG: ${{ github.event.ref }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          git fetch origin gh-pages --depth=1 || true
+          if ! git rev-parse --verify origin/gh-pages >/dev/null 2>&1; then
+            echo 'Nothing published yet.'
+            exit 0
+          fi
+
+          git worktree add site origin/gh-pages
+          git -C site checkout -B gh-pages
+
+          rm -rf "site/${SLUG}"
+          # Drop the parent directory too once its last branch is gone.
+          rmdir "site/$(dirname "${SLUG}")" 2>/dev/null || true
+
+          node scripts/build-preview-index.mjs site
+
+          git -C site add -A
+          if git -C site diff --cached --quiet; then
+            echo 'Nothing to remove.'
+          else
+            git -C site commit -m "Remove ${SLUG}"
+            git -C site push origin gh-pages
+          fi
