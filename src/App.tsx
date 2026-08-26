@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { Home } from './kit/Home.tsx'
+import { allNavDestinations } from './kit/nav.ts'
 import { Layout } from './kit/Layout.tsx'
 import { NotFound } from './kit/NotFound.tsx'
 import { SCREENS } from './kit/screens.ts'
@@ -13,7 +14,12 @@ import { PersonaProvider } from './kit/usePersona.tsx'
  */
 const Shell = () => {
   const { pathname } = useLocation()
-  const title = SCREENS.find((screen) => screen.path === pathname)?.title ?? 'GeoH UX Kit'
+  // An unmocked route still has a real nav entry, so title from that rather
+  // than the app name — the toolbar matches the row that was clicked.
+  const title =
+    SCREENS.find((screen) => screen.path === pathname)?.title ??
+    allNavDestinations().find((item) => item.to === pathname)?.label ??
+    'GeoH UX Kit'
 
   useEffect(() => {
     document.title = `${title} · GeoH UX Kit`

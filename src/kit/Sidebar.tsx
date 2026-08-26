@@ -39,10 +39,10 @@ const NavRow = ({ item, collapsed, submenu, active, onClick, to, actionIcon, onN
     <>
       <span className='nav-row__icon'>{Icon && <Icon size={submenu ? ICON_MEDIUM : ICON_LARGE} />}</span>
       <span className='nav-row__text'>{label}</span>
-      {item.action !== undefined && (
+      {(item.action !== undefined || actionIcon !== undefined) && (
         <span
           className='nav-row__action'
-          title={item.action.tooltip}
+          title={item.action?.tooltip}
           // Sits inside the row's link, so stop the click from also navigating.
           onClick={(event) => {
             event.preventDefault()
