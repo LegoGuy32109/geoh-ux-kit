@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <title>GeoH UX Kit — prototypes</title>
+    <link rel='preconnect' href='https://fonts.googleapis.com' />
+    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap' />
+    <style>
+      :root {
+        --bg: #f8f8f8;
+        --card: #ffffff;
+        --border: #e5e5e5;
+        --text: #334d6e;
+        --muted: #8b8b8b;
+        --link: #2699fb;
+        --bold: #27496d;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        padding: 48px 24px;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Montserrat', system-ui, sans-serif;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+      }
+      main { max-width: 640px; margin: 0 auto; }
+      h1 { margin: 0 0 4px; font-size: 28px; color: var(--bold); }
+      .sub { margin: 0 0 32px; color: var(--muted); }
+      ul { list-style: none; margin: 0; padding: 0; }
+      li {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px -1px rgb(0 0 0 / 10%);
+      }
+      a { color: var(--link); font-weight: 600; font-size: 16px; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      span { color: var(--muted); font-size: 12px; }
+      code { font-family: ui-monospace, monospace; background: #f2f2f2; padding: 1px 5px; border-radius: 3px; }
+      .empty { padding: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; color: var(--muted); }
+      footer { margin-top: 32px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>GeoH UX Kit</h1>
+      <p class='sub'>Live prototypes. Every branch gets its own.</p>
+      <ul>
+      <li>
+        <a href='./main/'>main</a>
+        <span>The shared baseline everyone branches from.</span>
+      </li>
+      </ul>
+      <footer>
+        Push a branch named <code>feat/&lt;something&gt;</code> and it appears here on its own URL.
+        Delete the branch and it disappears.
+      </footer>
+    </main>
+  </body>
+</html>
