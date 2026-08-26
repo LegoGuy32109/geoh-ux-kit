@@ -80,10 +80,12 @@ jobs:
           mkdir -p "site/${SLUG}"
           cp -R dist/. "site/${SLUG}/"
 
-          # SPA fallback: the app uses real paths, so a deep link like
-          # .../broadcast-studio has no file behind it. Pages serves 404.html
-          # for those, and it boots the same app at the same URL.
-          cp "site/${SLUG}/index.html" "site/${SLUG}/404.html"
+          # SPA fallback. Pages serves exactly one 404 page for a project
+          # site — the one at the root — and ignores 404.html inside a
+          # subdirectory, so a per-deployment copy would do nothing. This
+          # single root file handles deep links for every branch; see the
+          # comments in it and the decoder in index.html.
+          cp .github/pages-404.html site/404.html
 
           # Stop Pages running the tree through Jekyll.
           touch site/.nojekyll
