@@ -1,38 +1,31 @@
 import { Link } from 'react-router-dom'
 import { SCREENS } from './screens.ts'
 
+const CARD_HEADING = {
+  margin: '0 0 12px',
+  fontSize: 'var(--web-text-size-extra-large)',
+  color: 'var(--web-bold-color)'
+} as const
+
 /**
- * Landing page. Deliberately plain — the sidebar is the real index, and this
- * just says what is built and how to add the next one.
+ * Landing page.
+ *
+ * Deliberately plain — the sidebar is the real index of what exists. On `main`
+ * there are no screens at all, so this is the first thing a designer reads;
+ * it should tell them where prototypes live rather than just report an empty
+ * list.
  */
 export const Home = () => (
   <>
-    <div
-      className='card'
-      style={{
-        marginBottom: 24,
-        maxWidth: 680
-      }}
-    >
-      <h2
+    {SCREENS.length > 0 && (
+      <div
+        className='card'
         style={{
-          margin: '0 0 12px',
-          fontSize: 'var(--web-text-size-extra-large)',
-          color: 'var(--web-bold-color)'
+          marginBottom: 24,
+          maxWidth: 680
         }}
       >
-        Mocked screens
-      </h2>
-      {SCREENS.length === 0 ? (
-        <p
-          style={{
-            margin: 0,
-            color: 'var(--web-text-color-light)'
-          }}
-        >
-          None yet.
-        </p>
-      ) : (
+        <h2 style={CARD_HEADING}>Mocked screens</h2>
         <ul
           style={{
             margin: 0,
@@ -66,31 +59,53 @@ export const Home = () => (
             </li>
           ))}
         </ul>
-      )}
-    </div>
+      </div>
+    )}
 
     <div className='notice'>
-      <h2 className='notice__title'>Adding a screen</h2>
+      <h2 className='notice__title'>{SCREENS.length === 0 ? 'No screens on this branch' : 'Adding a screen'}</h2>
+
+      {SCREENS.length === 0 && (
+        <p
+          style={{
+            marginTop: 0
+          }}
+        >
+          That is expected on <code>main</code> — it is the harness everyone branches from. The sidebar around this page is the real GeoH navigation, and it is
+          already yours. Prototypes live on <code>feat/</code> branches, each with its own URL.
+        </p>
+      )}
+
       <p
-        style={{
-          marginTop: 0
-        }}
+        style={
+          SCREENS.length === 0
+            ? undefined
+            : {
+                marginTop: 0
+              }
+        }
       >
-        Run <code>yarn new:screen /my-feature</code>, then point <code>meta.nav</code> at a group and an icon:
+        Start one:
+      </p>
+      <pre>{'git switch -c feat/my-idea\nyarn new:screen /my-idea SuperAdmin TbSparkles'}</pre>
+
+      <p>
+        That writes a single file in <code>src/screens/</code>. Point <code>meta.nav</code> at a group and an icon and the row appears in the sidebar:
       </p>
       <pre>
         {`export const meta = {
-  path: '/broadcast-studio',
-  title: 'Broadcast Studio',
-  nav: { parent: 'SuperAdmin', icon: 'GrAnnounce', after: 'CompanyList' }
+  path: '/my-idea',
+  title: 'My Idea',
+  nav: { parent: 'SuperAdmin', icon: 'TbSparkles' }
 }`}
       </pre>
+
       <p
         style={{
           marginBottom: 0
         }}
       >
-        The row appears under that group with that icon. Nothing else to edit.
+        Push the branch and it deploys to its own link. Nothing else to edit.
       </p>
     </div>
   </>

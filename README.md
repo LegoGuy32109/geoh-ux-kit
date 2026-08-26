@@ -21,23 +21,26 @@ nav-row states, its three breakpoints, and the full navigation tree (13 groups,
 ## Adding a screen
 
 ```bash
-yarn new:screen /broadcast-studio SuperAdmin GrAnnounce
+yarn new:screen /my-idea SuperAdmin TbSparkles
 ```
 
 One file in `src/screens/`:
 
 ```tsx
 export const meta = {
-  path: '/broadcast-studio',
-  title: 'Broadcast Studio',
-  nav: { parent: 'SuperAdmin', icon: 'GrAnnounce', after: 'CompanyList' }
+  path: '/my-idea',
+  title: 'My Idea',
+  nav: { parent: 'SuperAdmin', icon: 'TbSparkles' }
 }
 
-export default function BroadcastStudio() { … }
+export default function MyIdea() { … }
 ```
 
-Point `meta.nav` at a group and an icon and the row appears there. Click the
-megaphone, you're on the page. No nav file to edit, no router to register with.
+Point `meta.nav` at a group and an icon and the row appears there. Click it,
+you're on the page. No nav file to edit, no router to register with.
+
+`main` ships no screens on purpose — it is the harness. Prototypes live on
+`feat/` branches.
 
 ## Prototypes and branches
 
@@ -60,10 +63,10 @@ automatically. Deleting the branch removes its deployment.
 
 ## Sharing
 
-Every view is a URL, persona included:
+Every view is a URL, so any screen in a prototype is a link you can paste:
 
 ```
-/broadcast-studio?as=executive-approver
+/geoh-ux-kit/feat/my-idea/my-idea
 ```
 
 ## Commands

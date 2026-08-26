@@ -26,24 +26,27 @@ Your job is only ever the content of one screen.
 ## Adding a screen
 
 ```
-yarn new:screen /broadcast-studio SuperAdmin GrAnnounce
+git switch -c feat/my-idea
+yarn new:screen /my-idea SuperAdmin TbSparkles
 ```
 
 That writes one file in `src/screens/`:
 
 ```tsx
 export const meta = {
-  path: '/broadcast-studio',
-  title: 'Broadcast Studio',
-  nav: { parent: 'SuperAdmin', icon: 'GrAnnounce', after: 'CompanyList' }
+  path: '/my-idea',
+  title: 'My Idea',
+  nav: { parent: 'SuperAdmin', icon: 'TbSparkles' }
 }
 
-export default function BroadcastStudio() { … }
+export default function MyIdea() { … }
 ```
 
 **`meta.nav` is the point of the kit.** Name a parent group and an icon and the
 row appears in the sidebar, in the right place, with that icon. Click it, you
 are on the page. There is no nav file to edit and no router to register with.
+
+`main` has no screens at all — it is the harness. Build on a `feat/` branch.
 
 - `parent` — a group `key` from `nav.json` (`SuperAdmin`, `Scheduling`,
   `Billing`, `Clients`, `AgencyManagement`, …). Omit for a top-level row.
@@ -153,19 +156,21 @@ src/
     nav.ts         gating, active-route matching, meta.nav merge
     screens.ts     route discovery
     useLayout.ts   breakpoints + collapse rules
-    personas.ts    who you can view as
-  screens/       one file per mocked screen. this is where you work.
+    user.ts        the one fixed identity
+  screens/       one file per mocked screen. empty on main; this is where you work.
 ```
 
-## Personas
+## No roles on main
 
-The segmented control in the header switches persona and writes `?as=<key>`, so
-any perspective is a shareable link. Both shipped personas hold every permission,
-so the nav is identical and screens branch on `persona.key`.
+There is one fixed user (`src/kit/user.ts`), no role switcher, and no
+permission gating: the nav shows every entry, and a screen never has to think
+about who is looking at it.
 
-To make a persona see a *smaller* nav — a Scheduler, a Biller — give it a lower
-`level` and real permission/feature key lists instead of `'*'`. `nav.ts` gates
-the sidebar with the portal's own rules, so the tree narrows on its own.
+The gates are still in the data. `nav.json` carries the real `permission`,
+`level` and `feature` keys from geoh's SidebarMap for all 54 entries, and
+`NavItem` still types them — `visibleNav()` just doesn't read them. A branch
+that wants role-aware nav has everything it needs and only has to write the
+filter and an identity to filter against.
 
 ## Keeping the snapshots current
 

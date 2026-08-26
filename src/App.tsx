@@ -5,7 +5,6 @@ import { allNavDestinations } from './kit/nav.ts'
 import { Layout } from './kit/Layout.tsx'
 import { NotFound } from './kit/NotFound.tsx'
 import { SCREENS } from './kit/screens.ts'
-import { PersonaProvider } from './kit/usePersona.tsx'
 
 /**
  * The chrome wraps the whole route tree rather than each screen, so moving
@@ -37,8 +36,4 @@ const Shell = () => {
   )
 }
 
-export const App = () => (
-  <PersonaProvider>
-    <Shell />
-  </PersonaProvider>
-)
+export const App = () => <Shell />

@@ -1,53 +1,8 @@
 import navFile from './nav.json'
 import { SCREENS, isMocked } from './screens.ts'
-import type { Gate, NavFile, NavItem, Persona } from './types.ts'
+import type { NavFile, NavItem } from './types.ts'
 
 const NAV = navFile as NavFile
-
-/** Levels are ordered — holding a higher one satisfies a lower requirement. */
-const LEVEL_RANK: Record<string, number> = {
-  Staff: 0,
-  Admin: 1,
-  SuperAdmin: 2
-}
-
-const asList = (gate: Gate | undefined): Array<string> =>
-  gate === undefined
-    ? []
-    : Array.isArray(gate)
-      ? gate
-      : [
-          gate
-        ]
-
-/** `'*'` grants everything; otherwise ANY required key is enough — matching geoh's hasPermission/hasAnyFeature. */
-const granted = (held: Array<string> | '*', required: Gate | undefined): boolean => {
-  const needed = asList(required)
-  if (needed.length === 0) return true
-  if (held === '*') return true
-  return needed.some((key) => held.includes(key))
-}
-
-const hasLevel = (persona: Persona, required: string | undefined): boolean =>
-  required === undefined || (LEVEL_RANK[persona.level] ?? 0) >= (LEVEL_RANK[required] ?? 0)
-
-/**
- * Port of the filter at the bottom of geoh's useSidebarBehavior.
- *
- * Two rules carried over deliberately, because they are what make the nav feel
- * right rather than merely complete: a group whose children ALL filter out
- * disappears even if the group's own gates pass, and `featureOrPermission`
- * inverts the default AND for the one item (Schedule) whose feature flag
- * restricts rather than grants.
- */
-const passes = (item: NavItem, persona: Persona): boolean => {
-  const feature = granted(persona.features, item.feature)
-  const permission = granted(persona.permissions, item.permission)
-  const level = hasLevel(persona, item.level)
-
-  if (item.enforce === 'featureOrPermission') return !feature || permission
-  return feature && permission && level
-}
 
 /** Insert `entry` into `siblings`, after the item keyed `after` when given. */
 const insert = (siblings: Array<NavItem>, entry: NavItem, after: string | undefined): Array<NavItem> => {
@@ -112,27 +67,15 @@ const mergedNav = (): Array<NavItem> => {
   return items
 }
 
-/** The nav tree this persona can see. */
-export const visibleNav = (persona: Persona): Array<NavItem> =>
-  mergedNav().flatMap((group) => {
-    if (group.items === undefined)
-      return passes(group, persona)
-        ? [
-            group
-          ]
-        : []
-
-    const items = group.items.filter((child) => passes(child, persona))
-    if (items.length === 0) return []
-    return passes(group, persona)
-      ? [
-          {
-            ...group,
-            items
-          }
-        ]
-      : []
-  })
+/**
+ * The nav tree.
+ *
+ * Everything is shown. geoh filters this by permission, level and feature
+ * flag; reproducing that needs an identity to filter against, which `main`
+ * deliberately does not have. A role-aware branch can add it back — the gates
+ * are still recorded on every entry in nav.json.
+ */
+export const visibleNav = (): Array<NavItem> => mergedNav()
 
 /** Every path this item should light up for. */
 export const routesFor = (item: NavItem): Array<string> =>

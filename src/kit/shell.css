@@ -70,14 +70,14 @@ a {
   grid-row: logo-min / logo;
 }
 
+/*
+ * Spans through the `options` cell, which is empty now that the role switcher
+ * is gone — otherwise the page background shows through the header row.
+ */
 .layout__search {
-  grid-column: header / options;
+  grid-column: header / user-min;
   grid-row: header;
   padding-left: 16px;
-}
-
-.layout__options {
-  grid-area: options;
 }
 
 .layout__user {
@@ -145,10 +145,6 @@ a {
   grid-column-end: realtime;
 }
 
-.layout--realtime-collapsed .layout__search {
-  grid-column-end: options;
-}
-
 /* ================================================== MID (641px – 1024px) == */
 /*
  * Content spans the full middle, so an opened pane floats over it behind a
@@ -189,10 +185,6 @@ a {
   .layout--sidebar-collapsed.layout--realtime-collapsed .layout__skrim {
     display: none;
   }
-
-  .layout__options {
-    grid-column-start: options;
-  }
 }
 
 /* ========================================================= MIN (≤ 640px) == */
@@ -216,11 +208,10 @@ a {
   }
 
   /*
-   * Qualified with `.layout` so these beat `.search-bar`/`.options-bar`, which
-   * set `display` later in this file. A media query adds no specificity.
+   * Qualified with `.layout` so this beats `.search-bar`, which sets `display`
+   * later in this file. A media query adds no specificity.
    */
-  .layout .layout__search,
-  .layout .layout__options {
+  .layout .layout__search {
     display: none;
   }
 
@@ -322,15 +313,6 @@ a {
   color: var(--web-text-color-light);
 }
 
-.options-bar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 12px;
-  background: var(--web-light-background-color);
-  border-bottom: 1px solid var(--web-dark-border-color);
-}
-
 .user-bar {
   display: flex;
   align-items: center;
@@ -339,51 +321,12 @@ a {
   border-bottom: 1px solid var(--web-dark-border-color);
 }
 
-/* Segmented "viewing as" control, as in the reference prototype. */
-.segmented {
-  display: flex;
-  border: 1px solid var(--web-light-border-color);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.segmented__option {
-  padding: 6px 10px;
-  font-size: var(--web-text-size-extra-small);
-  font-weight: 500;
-  color: var(--web-text-color);
-  background: var(--web-light-background-color);
-  white-space: nowrap;
-}
-
-.segmented__option:hover {
-  background: var(--web-light-hover-color);
-}
-
-.segmented__option--active {
-  background: var(--web-primary-color);
-  color: var(--web-text-inverse-color);
-}
-
-.segmented__option--active:hover {
-  background: var(--web-primary-hover-color);
-}
-
-.segmented--compact .segmented__option {
-  padding: 5px 8px;
-  font-size: var(--web-text-size-nano);
-}
-
 .mobile-header {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 10px;
   min-width: 0;
-}
-
-.mobile-header__spacer {
-  flex: 1;
 }
 
 /*

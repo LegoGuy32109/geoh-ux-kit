@@ -1,8 +1,7 @@
 import { MdArrowDropDown, MdMenu, MdSearch } from 'react-icons/md'
 import { Logo } from './Logo.tsx'
-import { PERSONAS } from './personas.ts'
 import type { LayoutState } from './useLayout.ts'
-import type { Persona } from './types.ts'
+import { USER } from './user.ts'
 
 const ICON_MEDIUM = 21
 
@@ -28,46 +27,21 @@ export const SearchBar = ({ className }: { className?: string }) => (
 )
 
 /**
- * "Viewing as" — the shape the Broadcast Studio prototype settled on after
- * trying two separate URLs. Writes `?as=` so a perspective stays linkable.
- */
-export const PersonaSwitch = ({ persona, onPersonaChange, compact }: { persona: Persona; onPersonaChange: (key: string) => void; compact?: boolean }) => (
-  <div className={`segmented${compact === true ? ' segmented--compact' : ''}`}>
-    {PERSONAS.map((option) => (
-      <button
-        type='button'
-        key={option.key}
-        className={`segmented__option${option.key === persona.key ? ' segmented__option--active' : ''}`}
-        onClick={() => onPersonaChange(option.key)}
-      >
-        {compact === true ? option.compactName : option.shortName}
-      </button>
-    ))}
-  </div>
-)
-
-export const OptionsBar = ({ className, persona, onPersonaChange }: { className?: string; persona: Persona; onPersonaChange: (key: string) => void }) => (
-  <div className={`${className ?? ''} options-bar`}>
-    <PersonaSwitch persona={persona} onPersonaChange={onPersonaChange} />
-  </div>
-)
-
-/**
  * Header avatar. Round, with the dropdown caret geoh hangs off its bottom-right
- * corner — the affordance that says this opens the user menu.
+ * corner — the affordance that says the user menu opens here.
  */
-export const UserBar = ({ className, persona }: { className?: string; persona: Persona }) => (
+export const UserBar = ({ className }: { className?: string }) => (
   <div className={`${className ?? ''} user-bar`}>
     <span
       className='avatar'
       style={{
-        background: persona.avatarColor,
+        background: USER.avatarColor,
         width: 35,
         height: 35,
         fontSize: 13
       }}
     >
-      {persona.initials}
+      {USER.initials}
       <span className='avatar__caret'>
         <MdArrowDropDown size={17} />
       </span>
@@ -75,15 +49,9 @@ export const UserBar = ({ className, persona }: { className?: string; persona: P
   </div>
 )
 
-/**
- * Shown instead of the search bar at the Min breakpoint. The `options` column
- * collapses at that width, so the persona switch moves in here rather than
- * disappearing — a reviewer on a phone still needs both perspectives.
- */
-export const MobileHeader = ({ className, persona, onPersonaChange }: { className?: string; persona: Persona; onPersonaChange: (key: string) => void }) => (
+/** Shown instead of the search bar at the Min breakpoint. */
+export const MobileHeader = ({ className }: { className?: string }) => (
   <div className={`${className ?? ''} mobile-header`}>
     <MdSearch size={ICON_MEDIUM} color='var(--web-icon-dark-color)' />
-    <span className='mobile-header__spacer' />
-    <PersonaSwitch persona={persona} onPersonaChange={onPersonaChange} compact />
   </div>
 )

@@ -2,9 +2,8 @@ import { useState, type ReactNode } from 'react'
 import { IoMdArrowBack } from 'react-icons/io'
 import { RealtimeSidebar, type RealtimeTab } from './RealtimeSidebar.tsx'
 import { Sidebar } from './Sidebar.tsx'
-import { LogoBar, MobileHeader, OptionsBar, SearchBar, UserBar } from './TopBar.tsx'
+import { LogoBar, MobileHeader, SearchBar, UserBar } from './TopBar.tsx'
 import { useLayout } from './useLayout.ts'
-import { usePersona } from './usePersona.tsx'
 
 /**
  * The chrome. Screens render inside `.page-body` and never touch any of this.
@@ -16,7 +15,6 @@ import { usePersona } from './usePersona.tsx'
  */
 export const Layout = ({ title, children }: { title: string; children: ReactNode }) => {
   const layout = useLayout()
-  const { persona, setPersona } = usePersona()
   const [realtimeTab, setRealtimeTab] = useState<RealtimeTab>('events')
   // Only used below the Max breakpoint, where groups toggle on click rather
   // than opening because their route went active.
@@ -33,14 +31,12 @@ export const Layout = ({ title, children }: { title: string; children: ReactNode
   return (
     <div className={className}>
       <LogoBar className='layout__logo' layout={layout} />
-      <MobileHeader className='layout__mobile' persona={persona} onPersonaChange={setPersona} />
+      <MobileHeader className='layout__mobile' />
       <SearchBar className='layout__search' />
-      <OptionsBar className='layout__options' persona={persona} onPersonaChange={setPersona} />
-      <UserBar className='layout__user' persona={persona} />
+      <UserBar className='layout__user' />
 
       <Sidebar
         className='layout__sidebar'
-        persona={persona}
         layout={layout}
         openKey={openGroup}
         onToggleGroup={(key) => setOpenGroup((current) => (current === key ? null : key))}

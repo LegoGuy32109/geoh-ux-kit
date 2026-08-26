@@ -4,7 +4,8 @@ import { Link, useLocation } from 'react-router-dom'
 import { ACTION_ICON, NAV_ICONS } from './icons.ts'
 import { groupTarget, isActive, isGroupActive, visibleNav } from './nav.ts'
 import type { LayoutState } from './useLayout.ts'
-import type { NavItem, Persona } from './types.ts'
+import { USER } from './user.ts'
+import type { NavItem } from './types.ts'
 
 /** theme.webIconSizeLarge / webIconSizeMedium. */
 const ICON_LARGE = 23
@@ -143,13 +144,12 @@ const NavGroup = ({
 
 export type SidebarProps = {
   className?: string
-  persona: Persona
   layout: LayoutState
   openKey: string | null
   onToggleGroup: (key: string) => void
 }
 
-export const Sidebar = ({ className, persona, layout, openKey, onToggleGroup }: SidebarProps) => {
+export const Sidebar = ({ className, layout, openKey, onToggleGroup }: SidebarProps) => {
   const collapsed = layout.sidebarCollapsed
   // Following a link on a floating sidebar should close it — otherwise it
   // covers the screen the reviewer just asked to see.
@@ -161,15 +161,15 @@ export const Sidebar = ({ className, persona, layout, openKey, onToggleGroup }: 
         <span
           className='avatar org__avatar'
           style={{
-            background: persona.avatarColor
+            background: USER.avatarColor
           }}
         >
-          {persona.initials}
+          {USER.initials}
         </span>
         <span className='org__text'>
-          <span className='org__agency'>{persona.organization}</span>
+          <span className='org__agency'>{USER.organization}</span>
           <br />
-          <span className='org__user'>{persona.name}</span>
+          <span className='org__user'>{USER.name}</span>
         </span>
         <span className='org__caret'>
           <MdArrowDropDown size={ICON_MEDIUM} />
@@ -179,7 +179,7 @@ export const Sidebar = ({ className, persona, layout, openKey, onToggleGroup }: 
       <div className='group-switch'>
         <span>
           <span className='group-switch__label'>Group: </span>
-          <span className='group-switch__value'>{persona.group}</span>
+          <span className='group-switch__value'>{USER.group}</span>
         </span>
         <span className='group-switch__caret'>
           <MdArrowDropDown size={ICON_MEDIUM} />
@@ -187,7 +187,7 @@ export const Sidebar = ({ className, persona, layout, openKey, onToggleGroup }: 
       </div>
 
       <div className='sidebar__scroll'>
-        {visibleNav(persona).map((group) => (
+        {visibleNav().map((group) => (
           <NavGroup key={group.key} group={group} layout={layout} openKey={openKey} onToggle={onToggleGroup} onNavigate={onNavigate} />
         ))}
 

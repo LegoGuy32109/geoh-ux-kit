@@ -1,6 +1,13 @@
 /** Shapes for nav.json. Mirrors geoh's `SidebarItem` (useSidebarBehavior.ts). */
 
-/** A permission/feature gate is either one key or a list; a list means "any of". */
+/**
+ * A permission/feature gate is either one key or a list; a list means "any of".
+ *
+ * Nothing on `main` reads these — the nav shows everything. They are kept
+ * because nav.json is a faithful transcription of geoh's SidebarMap and the
+ * fields are part of it, so a branch that wants role-aware nav has the data
+ * already and only needs to write the filter.
+ */
 export type Gate = string | Array<string>
 
 export type NavAction = {
@@ -58,22 +65,4 @@ export type ScreenNav = {
   permission?: Gate
   level?: string
   feature?: Gate
-}
-
-/** Who is viewing. Drives nav gating and the avatar in the top bar. */
-export type Persona = {
-  key: string
-  name: string
-  /** Short label for the segmented switcher in the top bar. */
-  shortName: string
-  /** Shorter still, for the mobile header where the column collapses. */
-  compactName: string
-  initials: string
-  avatarColor: string
-  organization: string
-  group: string
-  level: 'SuperAdmin' | 'Admin' | 'Staff'
-  /** `'*'` grants everything. */
-  permissions: Array<string> | '*'
-  features: Array<string> | '*'
 }
