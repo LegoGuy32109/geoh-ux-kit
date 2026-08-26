@@ -12,6 +12,7 @@
  * with a regex rather than executed. If that ever stops being true this will
  * report the lines it could not read instead of silently dropping them.
  */
+import { execFileSync } from 'node:child_process'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
@@ -73,7 +74,35 @@ ${body}
 }
 `.replace('$(date)', new Date().toISOString().slice(0, 10))
 
-writeFileSync(resolve(import.meta.dirname, '../src/kit/tokens.css'), out)
+const outputPath = resolve(import.meta.dirname, '../src/kit/tokens.css')
+writeFileSync(outputPath, out)
+
+/*
+ * Hand the result to Biome before finishing.
+ *
+ * tokens.css is committed and formatted like every other file, so this script
+ * must emit exactly what Biome would. Rather than trying to match its rules by
+ * hand — it lowercases hex, for one — let Biome do it. That keeps regeneration
+ * idempotent no matter how those rules change later.
+ */
+const biome = resolve(import.meta.dirname, '../node_modules/.bin/biome')
+try {
+  execFileSync(
+    biome,
+    [
+      'format',
+      '--write',
+      outputPath
+    ],
+    {
+      stdio: 'pipe'
+    }
+  )
+} catch (error) {
+  console.error(`\nCould not run Biome on the output: ${error.message}`)
+  console.error('Run `yarn fix` before committing, or the next `yarn check` will fail.')
+  process.exitCode = 1
+}
 
 console.log(`wrote ${entries.length} tokens from ${themePath}`)
 if (skipped.length) {

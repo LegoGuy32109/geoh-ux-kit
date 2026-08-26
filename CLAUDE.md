@@ -114,7 +114,8 @@ queries add no specificity. This shipped two wrong-breakpoint bugs before the
 check existed.
 
 **Never hand-edit `src/kit/tokens.css`.** Run `yarn gen:tokens ~/Work/geoh`
-and commit the diff.
+and commit the diff. The generator pipes its own output through Biome, so what
+it writes is already formatted and re-running it produces no diff.
 
 **Put tunable numbers in named constants** at the top of the file. When someone
 says "hold that a bit longer", that should be a one-line edit, not a hunt.
@@ -154,8 +155,11 @@ checkout.
 
 - **tokens**: `yarn gen:tokens ~/Work/geoh`, review the diff, commit.
 - **nav**: diff `apps/web/src/behaviors/useSidebarBehavior.ts` against `nav.json`
-  and transcribe the delta. The header comment in `nav.json` records which
-  fields were dropped and why.
+  and transcribe the delta, then `yarn fix`. The header comment in `nav.json`
+  records which fields were dropped and why.
+
+Both files are formatted by Biome like everything else — there are no
+formatter exclusions in this repo.
 
 ## Before you finish
 

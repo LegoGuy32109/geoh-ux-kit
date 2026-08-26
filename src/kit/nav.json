@@ -12,7 +12,7 @@
     "  - Items the real app builds conditionally (CMOSettings providers/offices, billingAdmin) are present",
     "    with their gate recorded in `feature`, so a persona toggles them rather than a code edit.",
     "",
-    "To refresh: diff SidebarMap against this file and transcribe the delta. Keep the field order."
+    "To refresh: diff SidebarMap against this file and transcribe the delta. Biome owns the formatting \u2014 run `yarn fix` afterwards rather than matching the layout by hand."
   ],
   "items": [
     {
@@ -22,12 +22,53 @@
       "icon": "BsPersonBadge",
       "level": "SuperAdmin",
       "items": [
-        { "key": "StaffListGlobal", "to": "/staff/global", "label": "Agency Employees", "icon": "HiOutlineUserGroup", "level": "SuperAdmin" },
-        { "key": "CompanyList", "to": "/companies", "label": "Agencies", "icon": "BiBuildings", "level": "SuperAdmin" },
-        { "key": "InvoiceList", "to": "/invoices", "label": "Invoices", "icon": "RiBillLine", "level": "SuperAdmin", "action": { "tooltip": "New Invoice", "to": "/invoices/edit" } },
-        { "key": "Insights", "to": "/insights", "label": "Insights", "icon": "MdInsights", "level": "SuperAdmin" },
-        { "key": "BillingAdmin", "to": "/billing-admin", "label": "Billing Admin", "icon": "TbReceiptDollar", "level": "SuperAdmin", "feature": "BillingAdmin" },
-        { "key": "CodeList", "to": "/codes", "label": "Code List", "icon": "TbZoomCode", "level": "SuperAdmin" }
+        {
+          "key": "StaffListGlobal",
+          "to": "/staff/global",
+          "label": "Agency Employees",
+          "icon": "HiOutlineUserGroup",
+          "level": "SuperAdmin"
+        },
+        {
+          "key": "CompanyList",
+          "to": "/companies",
+          "label": "Agencies",
+          "icon": "BiBuildings",
+          "level": "SuperAdmin"
+        },
+        {
+          "key": "InvoiceList",
+          "to": "/invoices",
+          "label": "Invoices",
+          "icon": "RiBillLine",
+          "level": "SuperAdmin",
+          "action": {
+            "tooltip": "New Invoice",
+            "to": "/invoices/edit"
+          }
+        },
+        {
+          "key": "Insights",
+          "to": "/insights",
+          "label": "Insights",
+          "icon": "MdInsights",
+          "level": "SuperAdmin"
+        },
+        {
+          "key": "BillingAdmin",
+          "to": "/billing-admin",
+          "label": "Billing Admin",
+          "icon": "TbReceiptDollar",
+          "level": "SuperAdmin",
+          "feature": "BillingAdmin"
+        },
+        {
+          "key": "CodeList",
+          "to": "/codes",
+          "label": "Code List",
+          "icon": "TbZoomCode",
+          "level": "SuperAdmin"
+        }
       ]
     },
     {
@@ -36,10 +77,37 @@
       "icon": "MdDashboard",
       "to": "/dashboard/metric-view",
       "items": [
-        { "key": "ClientTasklist", "to": "/dashboard/client-tasklist", "label": "Client Tasklist", "icon": "RiClipboardLine", "permission": "ClientView", "feature": "ClientTasklist" },
-        { "key": "EmployeeTasklist", "to": "/dashboard/employee-tasklist", "label": "Employee Tasklist", "icon": "RiClipboardLine", "permission": "StaffView", "feature": "EmployeeTasklist" },
-        { "key": "Metrics", "to": "/dashboard/metric-view", "label": "Metrics", "icon": "BiBarChartSquare", "permission": "MetricsView" },
-        { "key": "ExecutiveDashboard", "to": "/dashboard", "label": "Executive Dashboard", "icon": "RiPieChartLine", "permission": "ExecutiveDashboardView", "feature": "ExecutiveDashboard" }
+        {
+          "key": "ClientTasklist",
+          "to": "/dashboard/client-tasklist",
+          "label": "Client Tasklist",
+          "icon": "RiClipboardLine",
+          "permission": "ClientView",
+          "feature": "ClientTasklist"
+        },
+        {
+          "key": "EmployeeTasklist",
+          "to": "/dashboard/employee-tasklist",
+          "label": "Employee Tasklist",
+          "icon": "RiClipboardLine",
+          "permission": "StaffView",
+          "feature": "EmployeeTasklist"
+        },
+        {
+          "key": "Metrics",
+          "to": "/dashboard/metric-view",
+          "label": "Metrics",
+          "icon": "BiBarChartSquare",
+          "permission": "MetricsView"
+        },
+        {
+          "key": "ExecutiveDashboard",
+          "to": "/dashboard",
+          "label": "Executive Dashboard",
+          "icon": "RiPieChartLine",
+          "permission": "ExecutiveDashboardView",
+          "feature": "ExecutiveDashboard"
+        }
       ]
     },
     {
@@ -47,7 +115,14 @@
       "label": "Operations",
       "icon": "BiSpreadsheet",
       "items": [
-        { "key": "WorkListOperations", "to": "/work-list/operations", "label": "Operations Worklist", "icon": "TbChecklist", "permission": "OperationWorklistView", "feature": "OperationsWorklist" }
+        {
+          "key": "WorkListOperations",
+          "to": "/work-list/operations",
+          "label": "Operations Worklist",
+          "icon": "TbChecklist",
+          "permission": "OperationWorklistView",
+          "feature": "OperationsWorklist"
+        }
       ]
     },
     {
@@ -55,9 +130,41 @@
       "label": "Scheduling",
       "icon": "IoMdCalendar",
       "items": [
-        { "key": "Schedule", "to": "/scheduling", "label": "Schedule", "icon": "IoMdCalendar", "permission": "SchedulingViewSelf", "feature": "LimitCalendarView", "enforce": "featureOrPermission" },
-        { "key": "VisitFeed", "to": "/visits/feed", "label": "Visits", "icon": "HiOutlineLocationMarker", "permission": ["VisitList", "BillingVisitReview"], "routes": ["/visits/feed", "/visits/view"], "action": { "tooltip": "New Visit / Series", "to": "/scheduling/builder/series/type", "permission": "VisitEdit" } },
-        { "key": "TripList", "to": "/trips", "label": "Trips", "icon": "MdDirectionsCar", "permission": ["TripView", "TripViewSelf"], "routes": ["/trips", "/trips/edit"], "action": { "tooltip": "New Trip", "to": "/trips/edit", "permission": ["TripEdit", "TripEditSelf"] } }
+        {
+          "key": "Schedule",
+          "to": "/scheduling",
+          "label": "Schedule",
+          "icon": "IoMdCalendar",
+          "permission": "SchedulingViewSelf",
+          "feature": "LimitCalendarView",
+          "enforce": "featureOrPermission"
+        },
+        {
+          "key": "VisitFeed",
+          "to": "/visits/feed",
+          "label": "Visits",
+          "icon": "HiOutlineLocationMarker",
+          "permission": ["VisitList", "BillingVisitReview"],
+          "routes": ["/visits/feed", "/visits/view"],
+          "action": {
+            "tooltip": "New Visit / Series",
+            "to": "/scheduling/builder/series/type",
+            "permission": "VisitEdit"
+          }
+        },
+        {
+          "key": "TripList",
+          "to": "/trips",
+          "label": "Trips",
+          "icon": "MdDirectionsCar",
+          "permission": ["TripView", "TripViewSelf"],
+          "routes": ["/trips", "/trips/edit"],
+          "action": {
+            "tooltip": "New Trip",
+            "to": "/trips/edit",
+            "permission": ["TripEdit", "TripEditSelf"]
+          }
+        }
       ]
     },
     {
@@ -66,7 +173,14 @@
       "icon": "MdOutlinePayments",
       "to": "/payroll",
       "items": [
-        { "key": "PayrollWorkList", "to": "/payroll", "label": "Payroll Worklist", "icon": "TbReportMoney", "permission": "PayrollView", "feature": "PayrollWorklist" }
+        {
+          "key": "PayrollWorkList",
+          "to": "/payroll",
+          "label": "Payroll Worklist",
+          "icon": "TbReportMoney",
+          "permission": "PayrollView",
+          "feature": "PayrollWorklist"
+        }
       ]
     },
     {
@@ -76,12 +190,55 @@
       "permission": ["BillingVisitReview", "ViewClaims", "ViewClaimPayments"],
       "feature": ["WorklistClaimsEditMode", "WorklistClaimsViewMode"],
       "items": [
-        { "key": "ClaimCreate", "to": "/claims/create", "label": "Pre-Bill Visits", "icon": "AiOutlineFileAdd", "permission": ["BillingVisitReview"], "feature": ["WorklistClaimsEditMode", "WorklistClaimsViewMode"] },
-        { "key": "ClaimWorkList", "to": "/claims/work-list", "label": "Claims Worklist", "icon": "LiaFileInvoiceDollarSolid", "permission": ["ViewClaims"], "feature": ["WorklistClaimsEditMode"] },
-        { "key": "ClaimSummary", "to": "/claims/summary", "label": "Claims Summary", "icon": "HiOutlineClipboardDocumentList", "permission": ["ViewClaims"], "feature": ["WorklistClaimsEditMode", "WorklistClaimsViewMode"] },
-        { "key": "ClaimPaymentBatches", "to": "/claims/payment-batches", "label": "Remittances", "icon": "TbBuildingBank", "permission": ["ViewClaimPayments"], "feature": ["WorklistClaimsEditMode"], "routes": ["/claims/payments", "/claims/payment-batch", "/claims/payment-batches"] },
-        { "key": "ClaimPaymentsPosted", "to": "/claims/payments-posted", "label": "Payments Posted", "icon": "BiBarChartSquare", "permission": ["ViewClaimPayments"], "feature": ["WorklistClaimsEditMode", "WorklistClaimsViewMode"] },
-        { "key": "ClaimEligibility", "to": "/claims/eligibility", "label": "Eligibility", "icon": "TbUserSearch", "permission": ["ViewClaims"], "feature": ["WorklistClaimsEligibility"] }
+        {
+          "key": "ClaimCreate",
+          "to": "/claims/create",
+          "label": "Pre-Bill Visits",
+          "icon": "AiOutlineFileAdd",
+          "permission": ["BillingVisitReview"],
+          "feature": ["WorklistClaimsEditMode", "WorklistClaimsViewMode"]
+        },
+        {
+          "key": "ClaimWorkList",
+          "to": "/claims/work-list",
+          "label": "Claims Worklist",
+          "icon": "LiaFileInvoiceDollarSolid",
+          "permission": ["ViewClaims"],
+          "feature": ["WorklistClaimsEditMode"]
+        },
+        {
+          "key": "ClaimSummary",
+          "to": "/claims/summary",
+          "label": "Claims Summary",
+          "icon": "HiOutlineClipboardDocumentList",
+          "permission": ["ViewClaims"],
+          "feature": ["WorklistClaimsEditMode", "WorklistClaimsViewMode"]
+        },
+        {
+          "key": "ClaimPaymentBatches",
+          "to": "/claims/payment-batches",
+          "label": "Remittances",
+          "icon": "TbBuildingBank",
+          "permission": ["ViewClaimPayments"],
+          "feature": ["WorklistClaimsEditMode"],
+          "routes": ["/claims/payments", "/claims/payment-batch", "/claims/payment-batches"]
+        },
+        {
+          "key": "ClaimPaymentsPosted",
+          "to": "/claims/payments-posted",
+          "label": "Payments Posted",
+          "icon": "BiBarChartSquare",
+          "permission": ["ViewClaimPayments"],
+          "feature": ["WorklistClaimsEditMode", "WorklistClaimsViewMode"]
+        },
+        {
+          "key": "ClaimEligibility",
+          "to": "/claims/eligibility",
+          "label": "Eligibility",
+          "icon": "TbUserSearch",
+          "permission": ["ViewClaims"],
+          "feature": ["WorklistClaimsEligibility"]
+        }
       ]
     },
     {
@@ -89,9 +246,39 @@
       "label": "Clients",
       "icon": "RiUserLocationLine",
       "items": [
-        { "key": "ClientList", "to": "/clients", "label": "View Clients", "icon": "RiUserLocationLine", "permission": "ClientView", "routes": ["/clients", "/clients/edit", "/clients/view"], "action": { "tooltip": "New Client", "to": "/clients/create" } },
-        { "key": "AuthorizationFeed", "to": "/authorizations/feed", "label": "Authorizations", "icon": "RiShieldKeyholeLine", "permission": "AuthorizationView", "routes": ["/authorizations/feed", "/authorizations/edit", "/authorizations/view"], "action": { "tooltip": "New Authorization", "to": "/authorizations/edit", "permission": "AuthorizationEdit" } },
-        { "key": "AgencyFormsList", "to": "/forms/feed", "label": "Forms", "icon": "HiOutlineClipboardDocumentList", "permission": "ClientView", "feature": "OasisBatchExport" }
+        {
+          "key": "ClientList",
+          "to": "/clients",
+          "label": "View Clients",
+          "icon": "RiUserLocationLine",
+          "permission": "ClientView",
+          "routes": ["/clients", "/clients/edit", "/clients/view"],
+          "action": {
+            "tooltip": "New Client",
+            "to": "/clients/create"
+          }
+        },
+        {
+          "key": "AuthorizationFeed",
+          "to": "/authorizations/feed",
+          "label": "Authorizations",
+          "icon": "RiShieldKeyholeLine",
+          "permission": "AuthorizationView",
+          "routes": ["/authorizations/feed", "/authorizations/edit", "/authorizations/view"],
+          "action": {
+            "tooltip": "New Authorization",
+            "to": "/authorizations/edit",
+            "permission": "AuthorizationEdit"
+          }
+        },
+        {
+          "key": "AgencyFormsList",
+          "to": "/forms/feed",
+          "label": "Forms",
+          "icon": "HiOutlineClipboardDocumentList",
+          "permission": "ClientView",
+          "feature": "OasisBatchExport"
+        }
       ]
     },
     {
@@ -101,14 +288,25 @@
       "icon": "RiUserHeartLine",
       "permission": "StaffView",
       "routes": ["/staff", "/staff/edit", "/staff/view"],
-      "action": { "tooltip": "New Employee", "to": "/staff/edit", "permission": "StaffEdit" }
+      "action": {
+        "tooltip": "New Employee",
+        "to": "/staff/edit",
+        "permission": "StaffEdit"
+      }
     },
     {
       "key": "SmartBilling",
       "label": "Smart Billing",
       "icon": "BsCurrencyDollar",
       "items": [
-        { "key": "BillingWorkList", "to": "/billing/work-list", "label": "Billing Worklist", "icon": "BsCurrencyDollar", "permission": "ViewClaims", "feature": "BillingWorklist" }
+        {
+          "key": "BillingWorkList",
+          "to": "/billing/work-list",
+          "label": "Billing Worklist",
+          "icon": "BsCurrencyDollar",
+          "permission": "ViewClaims",
+          "feature": "BillingWorklist"
+        }
       ]
     },
     {
@@ -116,7 +314,13 @@
       "label": "Reporting",
       "icon": "MdOutlineAddchart",
       "items": [
-        { "key": "ReportCenter", "to": "/reporting/report-center", "label": "Report Center", "icon": "MdOutlineOutbox", "permission": "ReportsView" }
+        {
+          "key": "ReportCenter",
+          "to": "/reporting/report-center",
+          "label": "Report Center",
+          "icon": "MdOutlineOutbox",
+          "permission": "ReportsView"
+        }
       ]
     },
     {
@@ -124,8 +328,20 @@
       "label": "Fax",
       "icon": "MdOutlineFax",
       "items": [
-        { "key": "FaxInbox", "to": "/fax/inbox", "label": "Inbox", "icon": "MdOutlineMoveToInbox", "permission": "EFax" },
-        { "key": "FaxSentItems", "to": "/fax/sent-items", "label": "Sent Items", "icon": "AiOutlineSend", "permission": "EFax" }
+        {
+          "key": "FaxInbox",
+          "to": "/fax/inbox",
+          "label": "Inbox",
+          "icon": "MdOutlineMoveToInbox",
+          "permission": "EFax"
+        },
+        {
+          "key": "FaxSentItems",
+          "to": "/fax/sent-items",
+          "label": "Sent Items",
+          "icon": "AiOutlineSend",
+          "permission": "EFax"
+        }
       ]
     },
     {
@@ -134,19 +350,128 @@
       "labelShort": "Agency",
       "icon": "MdOutlineBusiness",
       "items": [
-        { "key": "VisitTypes", "to": "/visit-types", "label": "Visit Types", "icon": "BiPurchaseTagAlt", "permission": "VisitTypeView", "routes": ["/visit-types", "/visit-types/view", "/visit-types/create"], "action": { "tooltip": "New Visit Type", "to": "/visit-types/create", "permission": "VisitTypeEdit" } },
-        { "key": "Tasks", "to": "/tasks", "label": "Tasks", "icon": "RiServiceLine", "permission": "ServiceView" },
-        { "key": "GoalTemplates", "to": "/goal-templates", "label": "Goal Templates", "icon": "FiTarget", "permission": "CompanySettingsView", "feature": "GoalTemplates" },
-        { "key": "CustomForms", "to": "/custom-forms", "label": "Custom Forms", "icon": "CgNotes", "permission": "CompanySettingsView", "feature": "CustomForms" },
-        { "key": "ProviderCaseManagerList", "to": "/providers/case-managers", "label": "Case Managers", "icon": "RiUserStarLine", "permission": "ProviderView", "feature": "CMOSettings", "action": { "tooltip": "New Case Manager", "to": "/providers/case-managers/create" } },
-        { "key": "ProviderPhysicianList", "to": "/providers/physicians", "label": "Physicians", "icon": "RiUser2Line", "permission": "ProviderView", "feature": "CMOSettings", "action": { "tooltip": "New Physician", "to": "/providers/physicians/create" } },
-        { "key": "ProviderSpecialistList", "to": "/providers/specialist", "label": "Specialists", "icon": "RiUserFollowLine", "permission": "ProviderView", "feature": "CMOSettings", "action": { "tooltip": "New Specialist", "to": "/providers/specialist/create" } },
-        { "key": "OfficeList", "to": "/offices", "label": "Case Management Offices", "icon": "RiBuilding4Line", "permission": "OfficeView", "feature": "CMOSettings", "action": { "tooltip": "New Office", "to": "/offices/create", "permission": "OfficeEdit" } },
-        { "key": "Reporting", "to": "/reporting", "label": "Reporting", "icon": "HiOutlineDocumentReport", "permission": "ReportsView" },
-        { "key": "DocumentRoot", "to": "/documents", "label": "Documents", "icon": "TiFolder", "permission": "DocumentList" },
-        { "key": "RoleList", "to": "/roles", "label": "Role List", "icon": "TbIdBadge2", "permission": "CompanySettingsRoleView" },
-        { "key": "ServiceConnections", "to": "/service-connections", "label": "Service Connections", "icon": "TbPlug", "permission": "CompanySettingsEdit", "feature": "ServiceConnections" },
-        { "key": "CompanyView", "to": "/companies/view", "label": "Agency Settings", "icon": "RiSettings5Line", "permission": "CompanySettingsView", "routes": ["/companies/view", "/companies/edit"] }
+        {
+          "key": "VisitTypes",
+          "to": "/visit-types",
+          "label": "Visit Types",
+          "icon": "BiPurchaseTagAlt",
+          "permission": "VisitTypeView",
+          "routes": ["/visit-types", "/visit-types/view", "/visit-types/create"],
+          "action": {
+            "tooltip": "New Visit Type",
+            "to": "/visit-types/create",
+            "permission": "VisitTypeEdit"
+          }
+        },
+        {
+          "key": "Tasks",
+          "to": "/tasks",
+          "label": "Tasks",
+          "icon": "RiServiceLine",
+          "permission": "ServiceView"
+        },
+        {
+          "key": "GoalTemplates",
+          "to": "/goal-templates",
+          "label": "Goal Templates",
+          "icon": "FiTarget",
+          "permission": "CompanySettingsView",
+          "feature": "GoalTemplates"
+        },
+        {
+          "key": "CustomForms",
+          "to": "/custom-forms",
+          "label": "Custom Forms",
+          "icon": "CgNotes",
+          "permission": "CompanySettingsView",
+          "feature": "CustomForms"
+        },
+        {
+          "key": "ProviderCaseManagerList",
+          "to": "/providers/case-managers",
+          "label": "Case Managers",
+          "icon": "RiUserStarLine",
+          "permission": "ProviderView",
+          "feature": "CMOSettings",
+          "action": {
+            "tooltip": "New Case Manager",
+            "to": "/providers/case-managers/create"
+          }
+        },
+        {
+          "key": "ProviderPhysicianList",
+          "to": "/providers/physicians",
+          "label": "Physicians",
+          "icon": "RiUser2Line",
+          "permission": "ProviderView",
+          "feature": "CMOSettings",
+          "action": {
+            "tooltip": "New Physician",
+            "to": "/providers/physicians/create"
+          }
+        },
+        {
+          "key": "ProviderSpecialistList",
+          "to": "/providers/specialist",
+          "label": "Specialists",
+          "icon": "RiUserFollowLine",
+          "permission": "ProviderView",
+          "feature": "CMOSettings",
+          "action": {
+            "tooltip": "New Specialist",
+            "to": "/providers/specialist/create"
+          }
+        },
+        {
+          "key": "OfficeList",
+          "to": "/offices",
+          "label": "Case Management Offices",
+          "icon": "RiBuilding4Line",
+          "permission": "OfficeView",
+          "feature": "CMOSettings",
+          "action": {
+            "tooltip": "New Office",
+            "to": "/offices/create",
+            "permission": "OfficeEdit"
+          }
+        },
+        {
+          "key": "Reporting",
+          "to": "/reporting",
+          "label": "Reporting",
+          "icon": "HiOutlineDocumentReport",
+          "permission": "ReportsView"
+        },
+        {
+          "key": "DocumentRoot",
+          "to": "/documents",
+          "label": "Documents",
+          "icon": "TiFolder",
+          "permission": "DocumentList"
+        },
+        {
+          "key": "RoleList",
+          "to": "/roles",
+          "label": "Role List",
+          "icon": "TbIdBadge2",
+          "permission": "CompanySettingsRoleView"
+        },
+        {
+          "key": "ServiceConnections",
+          "to": "/service-connections",
+          "label": "Service Connections",
+          "icon": "TbPlug",
+          "permission": "CompanySettingsEdit",
+          "feature": "ServiceConnections"
+        },
+        {
+          "key": "CompanyView",
+          "to": "/companies/view",
+          "label": "Agency Settings",
+          "icon": "RiSettings5Line",
+          "permission": "CompanySettingsView",
+          "routes": ["/companies/view", "/companies/edit"]
+        }
       ]
     },
     {

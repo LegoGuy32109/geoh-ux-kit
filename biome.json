@@ -65,7 +65,7 @@
     }
   },
   "files": {
-    "includes": ["**", "!dist", "!.yarn", "!src/kit/tokens.css", "!src/kit/nav.json"]
+    "includes": ["**", "!dist", "!.yarn"]
   },
   "overrides": [
     {
