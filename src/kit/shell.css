@@ -1,0 +1,485 @@
+/*
+ * App chrome — sidebar, toolbar, mobile header.
+ *
+ * Every value here is a token from tokens.css, which is generated from geoh's
+ * theme.ts. There are no literal colors and no magic pixel counts, so the
+ * chrome tracks the real app by regenerating one file.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-size: var(--web-text-size-regular);
+  color: var(--web-text-color-regular);
+  background: var(--web-global-background-color);
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------------- layout -- */
+
+.shell {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+}
+
+.shell__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.shell__content {
+  flex: 1;
+  overflow: auto;
+  padding: var(--web-tab-content-padding);
+}
+
+/* --------------------------------------------------------------- sidebar -- */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: var(--web-sidebar-width);
+  background: var(--web-sidebar-color);
+  border-right: 1px solid var(--web-dark-border-color);
+  transition: width 0.25s;
+  z-index: 110;
+}
+
+.sidebar--collapsed {
+  width: var(--web-sidebar-min-width);
+}
+
+/* Under 1024px the sidebar leaves the flow and floats over the content. */
+.sidebar--overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: var(--web-light-box-shadow);
+}
+
+.sidebar--hidden {
+  width: 0;
+  border-right: none;
+  overflow: hidden;
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--web-top-bar-height);
+  padding: 0 12px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--web-dark-border-color);
+}
+
+.sidebar--collapsed .sidebar__header {
+  justify-content: center;
+  padding: 0;
+}
+
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: var(--web-text-size-extra-large);
+  color: var(--web-geoh-primary-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar__logo-glyph {
+  color: var(--web-geoh-primary-color);
+  flex-shrink: 0;
+}
+
+.sidebar__org {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--web-dark-border-color);
+  overflow: hidden;
+}
+
+.sidebar--collapsed .sidebar__org {
+  padding: 10px 4px;
+  text-align: center;
+}
+
+.sidebar__org-name {
+  font-size: var(--web-text-size-small);
+  font-weight: 600;
+  color: var(--web-bold-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar--collapsed .sidebar__org-name {
+  font-size: var(--web-text-size-extra-tiny);
+}
+
+.sidebar__org-group {
+  font-size: var(--web-text-size-extra-small);
+  color: var(--web-text-color-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar--collapsed .sidebar__org-group {
+  display: none;
+}
+
+.sidebar__scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ------------------------------------------------------------- nav items -- */
+
+.nav-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: var(--web-sidebar-link-height);
+  padding: 0 14px 0 12px;
+  text-align: left;
+  color: var(--web-bold-color);
+  font-size: var(--web-text-size-regular);
+}
+
+.nav-row:hover {
+  background: var(--web-sidebar-hover-color);
+}
+
+.nav-row--sub {
+  background: var(--web-sidebar-submenu-color);
+  font-size: var(--web-text-size-small);
+  padding-left: 24px;
+}
+
+.nav-row--sub:hover {
+  background: var(--web-sidebar-hover-color);
+}
+
+.nav-row--active {
+  background: var(--web-sidebar-hover-color);
+  font-weight: 700;
+}
+
+/* The left indicator bar. geoh paints it on the active row only. */
+.nav-row--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--web-sidebar-active-thumbnail-color);
+}
+
+/* Nav entries with no mocked screen behind them stay visible but read as
+   unavailable, so the sidebar shows the whole real app and lights up as
+   screens get built. This is the coverage indicator. */
+.nav-row--unmocked {
+  color: var(--web-text-disabled-color);
+  cursor: default;
+}
+
+.nav-row--unmocked:hover {
+  background: none;
+}
+
+.nav-row__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.nav-row__label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-row__action {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  padding: 2px;
+  color: var(--web-icon-light-color);
+}
+
+.nav-row__action:hover {
+  background: var(--web-sidebar-active-action-hover-color);
+  color: var(--web-icon-inverse-color);
+}
+
+.nav-row__chevron {
+  flex-shrink: 0;
+  color: var(--web-icon-light-color);
+  display: flex;
+  align-items: center;
+}
+
+/* Collapsed rail: icon over a shrunken label, exactly as geoh renders it.
+   `labelShort` from nav.json supplies the short text — no DOM surgery. */
+.sidebar--collapsed .nav-row {
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 9px 6px 9px 8px;
+  min-height: 58px;
+}
+
+.sidebar--collapsed .nav-row__label {
+  flex: none;
+  font-size: var(--web-text-size-extra-nano);
+  line-height: 11px;
+  text-align: center;
+  max-width: 100%;
+}
+
+.sidebar--collapsed .nav-row__action,
+.sidebar--collapsed .nav-row__chevron {
+  display: none;
+}
+
+/* --------------------------------------------------------------- toolbar -- */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--web-top-bar-height);
+  flex-shrink: 0;
+  padding: 0 16px;
+  background: var(--web-light-background-color);
+  border-bottom: 1px solid var(--web-dark-border-color);
+  z-index: 100;
+}
+
+.toolbar__hamburger {
+  display: flex;
+  align-items: center;
+  color: var(--web-icon-dark-color);
+  padding: 4px;
+  border-radius: 3px;
+}
+
+.toolbar__hamburger:hover {
+  background: var(--web-light-hover-color);
+}
+
+.toolbar__title {
+  font-size: var(--web-text-size-extra-large);
+  font-weight: 600;
+  color: var(--web-bold-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolbar__spacer {
+  flex: 1;
+}
+
+.toolbar__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  min-width: 220px;
+  border: 1px solid var(--web-light-border-color);
+  border-radius: 4px;
+  background: var(--web-extra-light-background-color);
+  color: var(--web-text-color-light);
+  font-size: var(--web-text-size-small);
+}
+
+.toolbar__icon-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  color: var(--web-icon-dark-color);
+  padding: 6px;
+  border-radius: 3px;
+}
+
+.toolbar__icon-button:hover {
+  background: var(--web-light-hover-color);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: var(--web-text-inverse-color);
+  font-size: var(--web-text-size-extra-small);
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------ persona switcher -- */
+
+.persona {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px 4px 4px;
+  border-radius: 20px;
+  border: 1px solid var(--web-light-border-color);
+}
+
+.persona:hover {
+  background: var(--web-light-hover-color);
+}
+
+.persona__name {
+  font-size: var(--web-text-size-small);
+  font-weight: 600;
+  color: var(--web-bold-color);
+  white-space: nowrap;
+}
+
+.persona-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 260px;
+  background: var(--web-light-background-color);
+  border: 1px solid var(--web-light-border-color);
+  border-radius: 4px;
+  box-shadow: var(--web-subtle-box-shadow);
+  overflow: hidden;
+  z-index: 200;
+}
+
+.persona-menu__heading {
+  padding: 10px 14px 6px;
+  font-size: var(--web-text-size-extra-small);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--web-text-color-light);
+}
+
+.persona-menu__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  text-align: left;
+}
+
+.persona-menu__option:hover {
+  background: var(--web-light-hover-color);
+}
+
+.persona-menu__option--active {
+  background: var(--web-primary-background-color);
+}
+
+.persona-menu__option-name {
+  font-size: var(--web-text-size-small);
+  font-weight: 600;
+  color: var(--web-bold-color);
+}
+
+.persona-menu__option-title {
+  font-size: var(--web-text-size-extra-small);
+  color: var(--web-text-color-light);
+}
+
+/* ------------------------------------------------------------------ misc -- */
+
+.skrim {
+  position: fixed;
+  inset: 0;
+  background: var(--web-skrim-color);
+  z-index: 105;
+}
+
+.page-title {
+  margin: 0 0 4px;
+  font-size: var(--web-text-size-signature);
+  font-weight: 700;
+  color: var(--web-bold-color);
+}
+
+.page-subtitle {
+  margin: 0 0 24px;
+  color: var(--web-text-color-light);
+}
+
+.card {
+  background: var(--web-light-background-color);
+  border: 1px solid var(--web-light-border-color);
+  border-radius: 4px;
+  box-shadow: var(--web-subtle-box-shadow);
+  padding: 20px;
+}
+
+.notice {
+  max-width: 640px;
+  padding: 20px 24px;
+  border-radius: 4px;
+  background: var(--web-information-background-color);
+  border: 1px solid var(--web-information-border-color);
+  color: var(--web-information-text-color);
+}
+
+.notice__title {
+  margin: 0 0 8px;
+  font-size: var(--web-text-size-extra-large);
+  font-weight: 700;
+  color: var(--web-bold-color);
+}
+
+.notice code {
+  font-family: ui-monospace, monospace;
+  font-size: var(--web-text-size-extra-small);
+  background: var(--web-disabled-dark-background-color);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
