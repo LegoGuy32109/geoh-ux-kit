@@ -1,9 +1,11 @@
 /*
- * App chrome — sidebar, toolbar, mobile header.
+ * App chrome, rebuilt from geoh's own layout source:
+ *   pages/Layout/styles/LayoutStyles.ts        the 5-column grid
+ *   pages/Layout/styles/SidebarLinkStyles.ts   nav row states
+ *   pages/Layout/styles/RealtimeSidebarStyles.ts
  *
- * Every value here is a token from tokens.css, which is generated from geoh's
- * theme.ts. There are no literal colors and no magic pixel counts, so the
- * chrome tracks the real app by regenerating one file.
+ * Every value is a token from tokens.css, generated from geoh's theme.ts.
+ * No literal colors, no invented pixel counts.
  */
 
 * {
@@ -21,7 +23,7 @@ body,
 body {
   font-family: 'Montserrat', system-ui, sans-serif;
   font-size: var(--web-text-size-regular);
-  color: var(--web-text-color-regular);
+  color: var(--web-text-color);
   background: var(--web-global-background-color);
   -webkit-font-smoothing: antialiased;
 }
@@ -39,209 +41,593 @@ a {
   text-decoration: none;
 }
 
-/* ---------------------------------------------------------------- layout -- */
+/* ============================================================== the grid == */
+/*
+ * Five columns, exactly as geoh declares them. The two "-min" rails are always
+ * present at fixed width; the sidebar and realtime panes move between their
+ * wide column and their rail by changing grid-column, not by animating width.
+ */
 
-.shell {
-  display: flex;
+.layout {
+  display: grid;
   height: 100%;
   overflow: hidden;
+  background: var(--web-global-background-color);
+  grid-template-columns:
+    var(--web-sidebar-min-width)
+    minmax(130px, var(--web-sidebar-width))
+    minmax(0, 1fr)
+    minmax(130px, var(--web-realtime-sidebar-width))
+    var(--web-realtime-sidebar-min-width);
+  grid-template-rows: var(--web-top-bar-height) minmax(0, 1fr);
+  grid-template-areas:
+    'logo-min logo    header  options  user-min'
+    'sidebar-min sidebar content realtime realtime-min';
 }
 
-.shell__main {
+.layout__logo {
+  grid-column: logo-min / logo;
+  grid-row: logo-min / logo;
+}
+
+.layout__search {
+  grid-column: header / options;
+  grid-row: header;
+  padding-left: 16px;
+}
+
+.layout__options {
+  grid-area: options;
+}
+
+.layout__user {
+  grid-area: user-min;
+}
+
+.layout__sidebar {
+  grid-column: sidebar-min / sidebar;
+  grid-row: sidebar-min / sidebar;
+}
+
+.layout .layout__content {
+  grid-area: content;
   display: flex;
-  flex: 1;
   flex-direction: column;
   min-width: 0;
-}
-
-.shell__content {
-  flex: 1;
-  overflow: auto;
-  padding: var(--web-tab-content-padding);
-}
-
-/* --------------------------------------------------------------- sidebar -- */
-
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  flex-shrink: 0;
-  width: var(--web-sidebar-width);
-  background: var(--web-sidebar-color);
-  border-right: 1px solid var(--web-dark-border-color);
-  transition: width 0.25s;
-  z-index: 110;
-}
-
-.sidebar--collapsed {
-  width: var(--web-sidebar-min-width);
-}
-
-/* Under 1024px the sidebar leaves the flow and floats over the content. */
-.sidebar--overlay {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  box-shadow: var(--web-light-box-shadow);
-}
-
-.sidebar--hidden {
-  width: 0;
-  border-right: none;
   overflow: hidden;
 }
 
-.sidebar__header {
+.layout__realtime {
+  grid-column: realtime / realtime-min;
+  grid-row: realtime / realtime-min;
+}
+
+/*
+ * Qualified with `.layout` so it outranks `.mobile-header`'s own `display`
+ * further down this file. Grid-placement rules and component rules both use a
+ * single class, so without this the later one silently wins.
+ */
+.layout .layout__mobile {
+  display: none;
+}
+
+.layout .layout__skrim {
+  display: none;
+}
+
+/* -- sidebar collapsed: it moves to the 70px rail column ------------------- */
+
+.layout--sidebar-collapsed .layout__logo {
+  grid-column: logo-min / logo-min;
+}
+
+.layout--sidebar-collapsed .layout__sidebar {
+  grid-column: sidebar-min / sidebar-min;
+}
+
+.layout--sidebar-collapsed .layout__content {
+  grid-column-start: sidebar;
+}
+
+.layout--sidebar-collapsed .layout__search {
+  grid-column-start: logo;
+  padding-left: 8px;
+}
+
+/* -- realtime collapsed: same idea on the right --------------------------- */
+
+.layout--realtime-collapsed .layout__realtime {
+  grid-column: realtime-min / realtime-min;
+}
+
+.layout--realtime-collapsed .layout__content {
+  grid-column-end: realtime;
+}
+
+.layout--realtime-collapsed .layout__search {
+  grid-column-end: options;
+}
+
+/* ================================================== MID (641px – 1024px) == */
+/*
+ * Content spans the full middle, so an opened pane floats over it behind a
+ * scrim instead of squeezing the page.
+ */
+
+@media (max-width: 1024px) {
+  .layout__content {
+    grid-column: sidebar / realtime;
+  }
+
+  .layout--sidebar-collapsed .layout__content {
+    grid-column-start: sidebar;
+  }
+
+  .layout--realtime-collapsed .layout__content {
+    grid-column-end: realtime;
+  }
+
+  .layout .layout__skrim {
+    display: block;
+    grid-column: header / content;
+    grid-row: header / realtime;
+    z-index: 111;
+    background: var(--web-skrim-color);
+    backdrop-filter: blur(2px);
+  }
+
+  .layout--sidebar-collapsed .layout__skrim {
+    grid-column-start: sidebar-min;
+  }
+
+  .layout--realtime-collapsed .layout__skrim {
+    grid-column-end: realtime-min;
+  }
+
+  /* Both panes closed: nothing is floating, so no scrim. */
+  .layout--sidebar-collapsed.layout--realtime-collapsed .layout__skrim {
+    display: none;
+  }
+
+  .layout__options {
+    grid-column-start: options;
+  }
+}
+
+/* ========================================================= MIN (≤ 640px) == */
+/*
+ * The search bar gives way to a mobile header, and a closed sidebar is gone
+ * entirely rather than leaving a rail.
+ */
+
+@media (max-width: 640px) {
+  /*
+   * Columns may collapse to zero here — at 390px the five fixed/min widths do
+   * not fit otherwise. geoh does the same in its Min block.
+   */
+  .layout {
+    grid-template-columns:
+      var(--web-sidebar-min-width)
+      minmax(0, var(--web-sidebar-width))
+      1fr
+      minmax(0, var(--web-realtime-sidebar-width))
+      var(--web-realtime-sidebar-min-width);
+  }
+
+  /*
+   * Qualified with `.layout` so these beat `.search-bar`/`.options-bar`, which
+   * set `display` later in this file. A media query adds no specificity.
+   */
+  .layout .layout__search,
+  .layout .layout__options {
+    display: none;
+  }
+
+  .layout__logo {
+    grid-column: logo-min / options;
+    grid-row: logo-min;
+    z-index: 100;
+    background: var(--web-light-background-color);
+  }
+
+  .layout__sidebar {
+    grid-column: sidebar-min / options;
+    grid-row: realtime;
+  }
+
+  .layout__realtime {
+    grid-column: sidebar / realtime-min;
+    grid-row: sidebar / realtime-min;
+  }
+
+  .layout__content {
+    grid-column: sidebar-min / realtime-min;
+    grid-row: sidebar-min / realtime-min;
+  }
+
+  .layout--sidebar-collapsed .layout__logo {
+    grid-column: logo-min / logo-min;
+  }
+
+  .layout--sidebar-collapsed .layout__sidebar {
+    display: none;
+  }
+
+  .layout.layout--sidebar-collapsed .layout__mobile {
+    display: flex;
+    align-items: center;
+    grid-column: logo / options;
+    grid-row: header;
+    background: var(--web-light-background-color);
+    border-bottom: 1px solid var(--web-light-border-color);
+  }
+
+  .layout--realtime-collapsed .layout__realtime {
+    display: none;
+  }
+}
+
+/* ================================================================ top bar = */
+
+.logo-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: var(--web-top-bar-height);
-  padding: 0 12px;
-  flex-shrink: 0;
+  background: var(--web-light-background-color);
   border-bottom: 1px solid var(--web-dark-border-color);
 }
 
-.sidebar--collapsed .sidebar__header {
-  justify-content: center;
-  padding: 0;
-}
-
-.sidebar__logo {
+.logo-bar__mark {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
+  margin-left: 16px;
+  font-size: 22px;
   font-weight: 700;
-  font-size: var(--web-text-size-extra-large);
+  letter-spacing: 0.02em;
   color: var(--web-geoh-primary-text-color);
   white-space: nowrap;
   overflow: hidden;
 }
 
-.sidebar__logo-glyph {
+.logo-bar__mark-dot {
   color: var(--web-geoh-primary-color);
+}
+
+.logo-bar__drawer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--web-top-bar-height);
+  height: var(--web-top-bar-height);
   flex-shrink: 0;
+  color: var(--web-icon-dark-color);
 }
 
-.sidebar__org {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--web-dark-border-color);
-  overflow: hidden;
+.logo-bar__drawer:hover {
+  background: var(--web-light-hover-color);
 }
 
-.sidebar--collapsed .sidebar__org {
-  padding: 10px 4px;
-  text-align: center;
-}
-
-.sidebar__org-name {
-  font-size: var(--web-text-size-small);
-  font-weight: 600;
-  color: var(--web-bold-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sidebar--collapsed .sidebar__org-name {
-  font-size: var(--web-text-size-extra-tiny);
-}
-
-.sidebar__org-group {
-  font-size: var(--web-text-size-extra-small);
-  color: var(--web-text-color-light);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.sidebar--collapsed .sidebar__org-group {
-  display: none;
-}
-
-.sidebar__scroll {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/* ------------------------------------------------------------- nav items -- */
-
-.nav-row {
-  position: relative;
+.search-bar {
   display: flex;
   align-items: center;
   gap: 12px;
+  background: var(--web-light-background-color);
+  border-bottom: 1px solid var(--web-dark-border-color);
+  color: var(--web-text-color-light);
+}
+
+.search-bar__text {
+  font-size: var(--web-text-size-large);
+  color: var(--web-text-color-light);
+}
+
+.options-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  background: var(--web-light-background-color);
+  border-bottom: 1px solid var(--web-dark-border-color);
+}
+
+.user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--web-light-background-color);
+  border-bottom: 1px solid var(--web-dark-border-color);
+}
+
+/* Segmented "viewing as" control, as in the reference prototype. */
+.segmented {
+  display: flex;
+  border: 1px solid var(--web-light-border-color);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.segmented__option {
+  padding: 6px 10px;
+  font-size: var(--web-text-size-extra-small);
+  font-weight: 500;
+  color: var(--web-text-color);
+  background: var(--web-light-background-color);
+  white-space: nowrap;
+}
+
+.segmented__option:hover {
+  background: var(--web-light-hover-color);
+}
+
+.segmented__option--active {
+  background: var(--web-primary-color);
+  color: var(--web-text-inverse-color);
+}
+
+.segmented__option--active:hover {
+  background: var(--web-primary-hover-color);
+}
+
+.segmented--compact .segmented__option {
+  padding: 5px 8px;
+  font-size: var(--web-text-size-nano);
+}
+
+.mobile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px;
+  min-width: 0;
+}
+
+.mobile-header__spacer {
+  flex: 1;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: var(--web-text-inverse-color);
+  font-weight: 600;
+}
+
+/* ================================================================ sidebar = */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--web-sidebar-color);
+  border-right: 1px solid var(--web-dark-border-color);
+  z-index: 110;
+}
+
+.sidebar__scroll {
+  flex: 1 1 1px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 16px;
+}
+
+/* -- org switcher (avatar + agency + user) -------------------------------- */
+
+.org {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0 16px 16px;
+  background: var(--web-sidebar-color);
+  border-bottom: 1px solid var(--web-dark-border-color);
+  cursor: pointer;
+}
+
+.org:hover {
+  background: var(--web-sidebar-hover-color);
+}
+
+.sidebar--collapsed .org {
+  justify-content: center;
+  padding: 8px;
+}
+
+.org__avatar {
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  border-radius: 4px;
+}
+
+.sidebar--collapsed .org__avatar {
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+}
+
+.org__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar--collapsed .org__text,
+.sidebar--collapsed .org__caret {
+  display: none;
+}
+
+.org__agency {
+  font-size: 12px;
+  color: var(--web-text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.org__user {
+  font-size: 16px;
+  color: var(--web-text-emphasis-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.org__caret {
+  padding-right: 6px;
+  color: var(--web-icon-dark-color);
+  display: flex;
+  align-items: center;
+}
+
+/* -- group switcher ------------------------------------------------------- */
+
+.group-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--web-sidebar-link-height);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--web-dark-border-color);
+  cursor: pointer;
+}
+
+.group-switch:hover {
+  background: var(--web-light-hover-color);
+}
+
+.sidebar--collapsed .group-switch {
+  flex-direction: column;
+  justify-content: center;
+  padding: 8px;
+  height: auto;
+}
+
+.group-switch__label {
+  font-weight: 500;
+  color: var(--web-text-color);
+}
+
+.sidebar--collapsed .group-switch__label,
+.sidebar--collapsed .group-switch__caret {
+  display: none;
+}
+
+.group-switch__value {
+  color: var(--web-text-emphasis-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar--collapsed .group-switch__value {
+  font-size: 10px;
   width: 100%;
-  min-height: var(--web-sidebar-link-height);
-  padding: 0 14px 0 12px;
+  text-align: center;
+}
+
+.group-switch__caret {
+  padding-right: 6px;
+  display: flex;
+  align-items: center;
+  color: var(--web-icon-dark-color);
+}
+
+/* -- nav rows ------------------------------------------------------------- */
+/*
+ * From SidebarLinkStyles.ts. The 4px left border is always there and is the
+ * same color as the row background; "active" just recolors it to the active
+ * thumbnail blue. That is why rows never shift by a pixel between states.
+ */
+
+.nav-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: var(--web-sidebar-link-height);
   text-align: left;
-  color: var(--web-bold-color);
-  font-size: var(--web-text-size-regular);
+  cursor: pointer;
+  background: var(--web-sidebar-color);
+  border-left: 4px solid var(--web-sidebar-color);
 }
 
 .nav-row:hover {
   background: var(--web-sidebar-hover-color);
+  border-left-color: var(--web-sidebar-hover-color);
 }
 
-.nav-row--sub {
-  background: var(--web-sidebar-submenu-color);
-  font-size: var(--web-text-size-small);
-  padding-left: 24px;
+.nav-row__icon {
+  width: var(--web-sidebar-icon-width);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--web-text-color);
 }
 
-.nav-row--sub:hover {
-  background: var(--web-sidebar-hover-color);
+.nav-row__text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--web-text-size-regular);
+  color: var(--web-text-color);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .nav-row--active {
   background: var(--web-sidebar-hover-color);
+  border-left-color: var(--web-sidebar-active-thumbnail-color);
+}
+
+.nav-row--active:hover {
+  border-left-color: var(--web-sidebar-active-thumbnail-color);
+}
+
+.nav-row--active .nav-row__text {
   font-weight: 700;
 }
 
-/* The left indicator bar. geoh paints it on the active row only. */
-.nav-row--active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: var(--web-sidebar-active-thumbnail-color);
+/* Children of the open group. */
+.nav-row--submenu {
+  background: var(--web-sidebar-submenu-color);
+  border-left-color: var(--web-sidebar-inactive-thumbnail-color);
+  padding-left: 1rem;
 }
 
-/* Nav entries with no mocked screen behind them stay visible but read as
-   unavailable, so the sidebar shows the whole real app and lights up as
-   screens get built. This is the coverage indicator. */
-.nav-row--unmocked {
-  color: var(--web-text-disabled-color);
-  cursor: default;
+.nav-row--submenu:hover {
+  border-left-color: var(--web-sidebar-inactive-thumbnail-color);
 }
 
-.nav-row--unmocked:hover {
-  background: none;
+.nav-row--submenu.nav-row--active {
+  background: var(--web-sidebar-hover-color);
+  border-left-color: var(--web-sidebar-active-thumbnail-color);
 }
 
-.nav-row__icon {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
+/* The group header while its children are showing. */
+.nav-row--group-open {
+  background: var(--web-sidebar-submenu-color);
+  border-left-color: var(--web-sidebar-inactive-thumbnail-color);
 }
 
-.nav-row__label {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.nav-group--open {
+  background: var(--web-submenu-background-color);
 }
 
 .nav-row__action {
-  flex-shrink: 0;
   display: flex;
   align-items: center;
-  border-radius: 3px;
-  padding: 2px;
+  justify-content: center;
+  width: var(--web-sidebar-icon-width);
+  align-self: stretch;
+  flex-shrink: 0;
   color: var(--web-icon-light-color);
+  background: inherit;
 }
 
 .nav-row__action:hover {
@@ -249,207 +635,199 @@ a {
   color: var(--web-icon-inverse-color);
 }
 
-.nav-row__chevron {
-  flex-shrink: 0;
-  color: var(--web-icon-light-color);
-  display: flex;
-  align-items: center;
-}
+/* -- collapsed rail ------------------------------------------------------- */
+/*
+ * Icon over a shrunken label. The label text comes from `labelShort` in
+ * nav.json — the real app has that field, so nothing needs to truncate it here.
+ */
 
-/* Collapsed rail: icon over a shrunken label, exactly as geoh renders it.
-   `labelShort` from nav.json supplies the short text — no DOM surgery. */
 .sidebar--collapsed .nav-row {
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
-  padding: 9px 6px 9px 8px;
-  min-height: 58px;
+  height: auto;
+  padding: 16px 8px;
 }
 
-.sidebar--collapsed .nav-row__label {
+.sidebar--collapsed .nav-row__icon {
+  width: 100%;
+}
+
+.sidebar--collapsed .nav-row__text {
   flex: none;
-  font-size: var(--web-text-size-extra-nano);
-  line-height: 11px;
+  width: 100%;
+  margin-top: 4px;
+  font-size: 8px;
   text-align: center;
-  max-width: 100%;
-}
-
-.sidebar--collapsed .nav-row__action,
-.sidebar--collapsed .nav-row__chevron {
-  display: none;
-}
-
-/* --------------------------------------------------------------- toolbar -- */
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: var(--web-top-bar-height);
-  flex-shrink: 0;
-  padding: 0 16px;
-  background: var(--web-light-background-color);
-  border-bottom: 1px solid var(--web-dark-border-color);
-  z-index: 100;
-}
-
-.toolbar__hamburger {
-  display: flex;
-  align-items: center;
-  color: var(--web-icon-dark-color);
-  padding: 4px;
-  border-radius: 3px;
-}
-
-.toolbar__hamburger:hover {
-  background: var(--web-light-hover-color);
-}
-
-.toolbar__title {
-  font-size: var(--web-text-size-extra-large);
-  font-weight: 600;
-  color: var(--web-bold-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.toolbar__spacer {
-  flex: 1;
+.sidebar--collapsed .nav-row__action {
+  display: none;
 }
 
-.toolbar__search {
+/* -- version footer ------------------------------------------------------- */
+
+.sidebar__version {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
-  height: 32px;
-  padding: 0 12px;
-  min-width: 220px;
-  border: 1px solid var(--web-light-border-color);
-  border-radius: 4px;
-  background: var(--web-extra-light-background-color);
-  color: var(--web-text-color-light);
-  font-size: var(--web-text-size-small);
+  padding: 8px 8px 8px 16px;
+  border-top: 1px solid var(--web-dark-border-color);
+  font-size: var(--web-text-size-extra-small);
+  font-weight: 500;
+  color: var(--web-text-color);
 }
 
-.toolbar__icon-button {
-  position: relative;
+.sidebar--collapsed .sidebar__version {
+  justify-content: center;
+  padding: 8px;
+}
+
+.sidebar--collapsed .sidebar__version span {
+  display: none;
+}
+
+/* ======================================================= realtime sidebar = */
+
+.realtime {
   display: flex;
-  align-items: center;
-  color: var(--web-icon-dark-color);
-  padding: 6px;
-  border-radius: 3px;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--web-light-background-color);
+  border-left: 1px solid var(--web-dark-border-color);
+  z-index: 50;
 }
 
-.toolbar__icon-button:hover {
-  background: var(--web-light-hover-color);
+.realtime__toolbar {
+  display: flex;
+  flex-direction: row;
 }
 
-.avatar {
+.realtime--collapsed .realtime__toolbar {
+  flex-direction: column;
+}
+
+.realtime__toggle {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: var(--web-tab-height);
+  height: calc(var(--web-tab-height) + 1px);
   flex-shrink: 0;
-  border-radius: 50%;
-  color: var(--web-text-inverse-color);
-  font-size: var(--web-text-size-extra-small);
-  font-weight: 600;
+  background: var(--web-extra-light-active-color);
+  border-bottom: 1px solid var(--web-dark-border-color);
+  border-right: 1px solid var(--web-dark-border-color);
+  color: var(--web-icon-dark-color);
 }
 
-/* ------------------------------------------------------ persona switcher -- */
+.realtime--collapsed .realtime__toggle {
+  width: 100%;
+  padding: 16px;
+  border-right: none;
+}
 
-.persona {
+.realtime__toggle:hover {
+  background: var(--web-light-hover-color);
+}
+
+.realtime__tab {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 8px 4px 4px;
-  border-radius: 20px;
-  border: 1px solid var(--web-light-border-color);
+  justify-content: center;
+  flex: 1;
+  padding: 16px;
+  height: calc(var(--web-tab-height) + 1px);
+  background: var(--web-extra-light-active-color);
+  border-bottom: 1px solid var(--web-dark-border-color);
+  border-right: 1px solid var(--web-dark-border-color);
+  color: var(--web-icon-light-color);
 }
 
-.persona:hover {
+.realtime__tab:last-child {
+  border-right: none;
+}
+
+.realtime--collapsed .realtime__tab {
+  border-right: none;
+}
+
+.realtime__tab:hover {
   background: var(--web-light-hover-color);
 }
 
-.persona__name {
-  font-size: var(--web-text-size-small);
-  font-weight: 600;
-  color: var(--web-bold-color);
-  white-space: nowrap;
-}
-
-.persona-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  min-width: 260px;
+.realtime__tab--active {
   background: var(--web-light-background-color);
-  border: 1px solid var(--web-light-border-color);
-  border-radius: 4px;
-  box-shadow: var(--web-subtle-box-shadow);
-  overflow: hidden;
-  z-index: 200;
+  border-bottom-color: var(--web-light-background-color);
+  color: var(--web-icon-active-color);
 }
 
-.persona-menu__heading {
-  padding: 10px 14px 6px;
-  font-size: var(--web-text-size-extra-small);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+.realtime__badge {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+  color: var(--web-text-inverse-color);
+}
+
+.realtime__panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.realtime__empty {
   color: var(--web-text-color-light);
+  font-size: var(--web-text-size-small);
+  text-align: center;
+  padding-top: 32px;
 }
 
-.persona-menu__option {
+/* ============================================================ page content = */
+
+.page-toolbar {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 8px 14px;
-  text-align: left;
+  gap: 8px;
+  height: 52px;
+  flex-shrink: 0;
+  padding: 0 16px;
+  background: var(--web-light-background-color);
+  border-bottom: 1px solid var(--web-light-border-color);
 }
 
-.persona-menu__option:hover {
-  background: var(--web-light-hover-color);
+.page-toolbar__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--web-icon-dark-color);
+  padding: 4px;
 }
 
-.persona-menu__option--active {
-  background: var(--web-primary-background-color);
+.page-toolbar__title {
+  margin: 0;
+  font-size: var(--web-text-size-extra-giant);
+  font-weight: 500;
+  color: var(--web-text-emphasis-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.persona-menu__option-name {
-  font-size: var(--web-text-size-small);
-  font-weight: 600;
-  color: var(--web-bold-color);
-}
-
-.persona-menu__option-title {
-  font-size: var(--web-text-size-extra-small);
-  color: var(--web-text-color-light);
-}
-
-/* ------------------------------------------------------------------ misc -- */
-
-.skrim {
-  position: fixed;
-  inset: 0;
-  background: var(--web-skrim-color);
-  z-index: 105;
-}
-
-.page-title {
-  margin: 0 0 4px;
-  font-size: var(--web-text-size-signature);
-  font-weight: 700;
-  color: var(--web-bold-color);
-}
-
-.page-subtitle {
-  margin: 0 0 24px;
-  color: var(--web-text-color-light);
+.page-body {
+  flex: 1;
+  overflow: auto;
+  padding: var(--web-tab-content-padding);
 }
 
 .card {
@@ -461,7 +839,7 @@ a {
 }
 
 .notice {
-  max-width: 640px;
+  max-width: 680px;
   padding: 20px 24px;
   border-radius: 4px;
   background: var(--web-information-background-color);
@@ -476,10 +854,19 @@ a {
   color: var(--web-bold-color);
 }
 
-.notice code {
+.notice code,
+.notice pre {
   font-family: ui-monospace, monospace;
   font-size: var(--web-text-size-extra-small);
   background: var(--web-disabled-dark-background-color);
-  padding: 2px 5px;
   border-radius: 3px;
+}
+
+.notice code {
+  padding: 2px 5px;
+}
+
+.notice pre {
+  padding: 12px;
+  overflow-x: auto;
 }

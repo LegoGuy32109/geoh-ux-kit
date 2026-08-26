@@ -60,6 +60,29 @@ for (const file of files) {
   })
 }
 
+/*
+ * Grid-placement rules and component rules both use a single class, so a
+ * `.layout__x { display: none }` inside a media query silently loses to a
+ * `.component { display: flex }` written later in the file — media queries add
+ * no specificity. This bit twice: the search bar and the mobile header both
+ * rendered at the wrong breakpoint. Require the `.layout` qualifier.
+ */
+{
+  const shellPath = resolve(srcDir, 'kit/shell.css')
+  const lines = readFileSync(shellPath, 'utf8').split('\n')
+  lines.forEach((text, index) => {
+    const selector = text.match(/^\s*(\.layout__[A-Za-z-]+)\s*(,|\{)/)
+    if (selector && !/\.layout[ .]/.test(text)) {
+      // Only `display` is at risk; placement properties don't collide.
+      const block = lines.slice(index, index + 6).join(' ')
+      if (/display\s*:/.test(block.split('}')[0])) {
+        report(shellPath, index + 1, 'layout-display-specificity',
+          `${selector[1]} sets \`display\` unqualified — write \`.layout ${selector[1]}\` so it outranks the component rule later in the file.`)
+      }
+    }
+  })
+}
+
 // Every screen must declare a `meta` with a path, or it silently never routes.
 for (const file of files.filter((f) => f.includes('/screens/') && f.endsWith('.tsx'))) {
   const source = readFileSync(file, 'utf8')

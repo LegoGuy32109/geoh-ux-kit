@@ -1,33 +1,35 @@
 import type { ComponentType } from 'react'
+import type { ScreenNav } from './types.ts'
 
 /**
  * Every screen this prototype mocks.
  *
  * A screen is one file in `src/screens/`. It default-exports a component and
- * named-exports `meta` with the geoh route path it stands in for:
+ * named-exports `meta`:
  *
- *   export const meta = { path: '/broadcast-studio', title: 'Broadcast Studio' }
- *   export default function BroadcastStudio() { ... }
+ *   export const meta = {
+ *     path: '/broadcast-studio',
+ *     title: 'Broadcast Studio',
+ *     nav: { parent: 'SuperAdmin', icon: 'GrAnnounce', after: 'CompanyList' }
+ *   }
  *
- * That is the whole contract. Dropping the file in registers the route — there
- * is no second place to edit, so there is no second place to forget.
- *
- * Paths should match `to` values in nav.json wherever one exists, so the real
- * nav entry becomes a live link. A screen on a path nav.json doesn't know about
- * still works; it just isn't reachable from the sidebar.
+ * `nav` is what puts the row in the sidebar — pick a parent group and an icon
+ * and it appears there. Drop the file in, click the icon, you are on the page.
+ * Leave `nav` off and the screen is reachable by URL only; that is right when
+ * the path already exists in nav.json, since the real row then links to it.
  */
 export type ScreenMeta = {
   /** geoh route this screen stands in for. Must start with '/'. */
   path: string
-  /** Shown in the toolbar and the browser tab. */
+  /** Shown in the page toolbar and the browser tab. */
   title: string
-  /** Optional one-liner shown on the coverage page. */
-  description?: string
+  /** Where this screen sits in the sidebar. Omit if nav.json already has the path. */
+  nav?: ScreenNav
 }
 
 export type Screen = ScreenMeta & {
   Component: ComponentType
-  /** Source file, so the coverage page can tell you what to open. */
+  /** Source file, so tooling can point at what to open. */
   file: string
 }
 

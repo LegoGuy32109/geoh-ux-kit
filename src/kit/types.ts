@@ -16,10 +16,7 @@ export type NavItem = {
   labelShort?: string
   icon: string
   to?: string
-  /**
-   * Extra paths that should light this item as active, beyond `to`.
-   * Defaults to `[to]`. Matches geoh's `routes` field.
-   */
+  /** Extra paths that also light this item as active. Defaults to `[to]`. */
   routes?: Array<string>
   permission?: Gate
   level?: string
@@ -32,6 +29,8 @@ export type NavItem = {
   enforce?: 'all' | 'featureOrPermission'
   action?: NavAction
   items?: Array<NavItem>
+  /** Set on entries contributed by a screen's `meta.nav` rather than nav.json. */
+  fromScreen?: boolean
 }
 
 export type NavFile = {
@@ -39,16 +38,40 @@ export type NavFile = {
   items: Array<NavItem>
 }
 
-/** Who is viewing. Drives nav gating and the avatar in the toolbar. */
+/**
+ * Where a screen puts itself in the sidebar.
+ *
+ * This is the point of the kit: you name a parent group and an icon, and the
+ * nav row appears. No nav.json edit, no second file to keep in sync.
+ */
+export type ScreenNav = {
+  /** `key` of the group to nest under, e.g. 'SuperAdmin'. Omit for a top-level row. */
+  parent?: string
+  /** Defaults to the screen's `title`. */
+  label?: string
+  /** Shown on the collapsed rail. Defaults to the first word of the label. */
+  labelShort?: string
+  /** Name from `src/kit/icons.ts` — e.g. 'GrAnnounce' for the megaphone. */
+  icon: string
+  /** Place this row after the sibling with this key. Defaults to the end of the group. */
+  after?: string
+  permission?: Gate
+  level?: string
+  feature?: Gate
+}
+
+/** Who is viewing. Drives nav gating and the avatar in the top bar. */
 export type Persona = {
   key: string
   name: string
-  /** Shown under the persona name in the switcher — their job, in plain words. */
-  title: string
+  /** Short label for the segmented switcher in the top bar. */
+  shortName: string
+  /** Shorter still, for the mobile header where the column collapses. */
+  compactName: string
   initials: string
   avatarColor: string
   organization: string
-  group?: string
+  group: string
   level: 'SuperAdmin' | 'Admin' | 'Staff'
   /** `'*'` grants everything. */
   permissions: Array<string> | '*'

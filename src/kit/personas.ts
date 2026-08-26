@@ -1,24 +1,26 @@
 import type { Persona } from './types.ts'
 
 /**
- * Who a reviewer can view the prototype as.
+ * Who a reviewer can view the prototype as, shown as the segmented control in
+ * the header. The active persona is in the URL (`?as=<key>`), so any view is
+ * linkable and survives a reload — that is what a stakeholder pastes into Slack.
  *
- * This is the one place role/permission fiction lives. Adding a persona is a
- * few lines here — never a code change in a screen. Screens read the active
- * persona from `usePersona()` and branch on `can(...)`, so a flow that behaves
- * differently for an approver stays one screen, not two.
- *
- * The active persona is in the URL (`?as=<key>`), so any view is linkable and
- * survives a reload. That is what a stakeholder pastes into Slack.
+ * Both personas below hold every permission, so the nav is identical for each
+ * and screens branch on `persona.key` alone. To make a persona see a smaller
+ * nav — a Scheduler, a Biller — give it a lower `level` and a real list of
+ * permission/feature keys instead of `'*'`; `nav.ts` gates the sidebar with the
+ * same rules the portal uses, so the tree narrows on its own.
  */
 export const PERSONAS: Array<Persona> = [
   {
     key: 'super-admin',
     name: 'John Doe',
-    title: 'GEOH Super Administrator',
+    shortName: 'Super Admin',
+    compactName: 'Admin',
     initials: 'JD',
     avatarColor: 'var(--web-progress-bar-success-background-color)',
-    organization: 'GEOH',
+    organization: 'GEOH Demonstration',
+    group: 'GEOH',
     level: 'SuperAdmin',
     permissions: '*',
     features: '*'
@@ -26,59 +28,15 @@ export const PERSONAS: Array<Persona> = [
   {
     key: 'executive-approver',
     name: 'Jennifer James',
-    title: 'Executive Approver',
+    shortName: 'Executive Approver',
+    compactName: 'Approver',
     initials: 'JJ',
     avatarColor: 'var(--web-wisteria-color)',
-    organization: 'GEOH',
-    level: 'Admin',
+    organization: 'GEOH Demonstration',
+    group: 'GEOH',
+    level: 'SuperAdmin',
     permissions: '*',
     features: '*'
-  },
-  {
-    key: 'agency-admin',
-    name: 'Maria Alvarez',
-    title: 'Agency Administrator',
-    initials: 'MA',
-    avatarColor: 'var(--web-primary-color)',
-    organization: 'Riverbend Home Care',
-    group: 'All Locations',
-    level: 'Admin',
-    // No SuperAdmin level, so the whole Super Administrator group disappears —
-    // the same way it does in the real app.
-    permissions: '*',
-    features: '*'
-  },
-  {
-    key: 'scheduler',
-    name: 'Devon Brooks',
-    title: 'Scheduler',
-    initials: 'DB',
-    avatarColor: 'var(--web-carrot-color)',
-    organization: 'Riverbend Home Care',
-    group: 'North Region',
-    level: 'Staff',
-    permissions: [
-      'ClientView',
-      'StaffView',
-      'VisitList',
-      'VisitEdit',
-      'SchedulingViewSelf',
-      'AuthorizationView',
-      'TripView',
-      'MetricsView'
-    ],
-    features: ['ClientTasklist', 'EmployeeTasklist']
-  },
-  {
-    key: 'biller',
-    name: 'Priya Raman',
-    title: 'Billing Specialist',
-    initials: 'PR',
-    avatarColor: 'var(--web-turquoise-color)',
-    organization: 'Riverbend Home Care',
-    level: 'Staff',
-    permissions: ['ViewClaims', 'ViewClaimPayments', 'BillingVisitReview', 'ClientView'],
-    features: ['WorklistClaimsEditMode', 'WorklistClaimsViewMode', 'WorklistClaimsEligibility', 'BillingWorklist']
   }
 ]
 
