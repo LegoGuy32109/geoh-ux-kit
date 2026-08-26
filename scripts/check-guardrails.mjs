@@ -28,7 +28,10 @@ const report = (file, line, rule, detail) =>
 for (const file of files) {
   // tokens.css is generated from geoh's theme and is the one place literal
   // colors are allowed — it is where they come from.
-  const isTokens = file.endsWith('kit/tokens.css')
+  // tokens.css is where literal colors come from. Logo.tsx is a verbatim copy
+  // of geoh's LogoFlat.tsx and carries the brand mark's own palette, which must
+  // stay fixed rather than follow the UI theme.
+  const isTokens = file.endsWith('kit/tokens.css') || file.endsWith('kit/Logo.tsx')
   const lines = readFileSync(file, 'utf8').split('\n')
 
   lines.forEach((text, index) => {

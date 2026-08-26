@@ -1,4 +1,5 @@
-import { MdMenu, MdSearch } from 'react-icons/md'
+import { MdArrowDropDown, MdMenu, MdSearch } from 'react-icons/md'
+import { Logo } from './Logo.tsx'
 import { PERSONAS } from './personas.ts'
 import type { LayoutState } from './useLayout.ts'
 import type { Persona } from './types.ts'
@@ -10,7 +11,7 @@ export const LogoBar = ({ className, layout }: { className?: string; layout: Lay
   <div className={`${className ?? ''} logo-bar`}>
     {!layout.sidebarCollapsed && (
       <span className='logo-bar__mark'>
-        GE<span className='logo-bar__mark-dot'>◉</span>H
+        <Logo />
       </span>
     )}
     <button type='button' className='logo-bar__drawer' onClick={layout.toggleSidebar} aria-label='Toggle navigation'>
@@ -67,10 +68,17 @@ export const OptionsBar = ({
   </div>
 )
 
+/**
+ * Header avatar. Round, with the dropdown caret geoh hangs off its bottom-right
+ * corner — the affordance that says this opens the user menu.
+ */
 export const UserBar = ({ className, persona }: { className?: string; persona: Persona }) => (
   <div className={`${className ?? ''} user-bar`}>
-    <span className='avatar' style={{ background: persona.avatarColor, width: 36, height: 36, fontSize: 13 }}>
+    <span className='avatar' style={{ background: persona.avatarColor, width: 35, height: 35, fontSize: 13 }}>
       {persona.initials}
+      <span className='avatar__caret'>
+        <MdArrowDropDown size={17} />
+      </span>
     </span>
   </div>
 )
