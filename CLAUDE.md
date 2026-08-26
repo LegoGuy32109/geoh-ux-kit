@@ -59,6 +59,28 @@ If the path is **already** a `to` in `nav.json` (`/clients`, `/payroll`), leave
 Rows with no screen behind them stay in the sidebar and look exactly as they do
 in the portal; clicking one lands on a page naming the command that builds it.
 
+## Recording a flow
+
+To hand someone a video instead of a link — through Slack, in a PR, wherever a
+live URL doesn't reach — record one:
+
+```
+yarn record my-flow
+```
+
+`flows/` is empty on `main`, same convention as `src/screens/` — build a
+flow on your `feat/` branch alongside the screen it demonstrates. One file
+per flow, not one per screen: a flow can walk across screens. `yarn record
+<name>` boots the dev server, drives `flows/<name>.flow.mjs` with Playwright,
+and writes a `.webm` to `exports/<name>/`. `exports/` is gitignored;
+recordings are share artifacts, not source. Recording goes through
+Playwright's Screencast API, so every action gets a real animated cursor and
+an on-screen label for free — the recording reads at watching speed, not CI
+speed, with no change needed to how a flow is written. Tune the hold time
+with `--action-duration=`. See `flows/README.md` for the full writeup:
+real API defaults, the recommended pattern for a share-quality recording, and
+pitfalls already found so they don't need rediscovering.
+
 ## Tooling
 
 Yarn 4, pinned by the `packageManager` field and resolved through Corepack, so
@@ -112,6 +134,34 @@ Two things the build depends on that are easy to break:
 - The app uses real paths, so deep links have no file behind them. The workflow
   copies each build's `index.html` to `404.html`, which is what makes
   `/feat/x/broadcast-studio` work. Those links load with a 404 status by design.
+
+## Persisting state past a reload
+
+Plain `useState` fixture data resets every time — that's the default and
+usually the right choice, since most screens are meant to be looked at once,
+not lived in. If a screen genuinely needs to survive a reload (a kanban board
+someone drags cards around on, a draft someone comes back to), back it with
+`localStorage`, but know its actual behavior before reaching for it:
+
+- **A reload does not clear `localStorage`** — that's the point of it. What
+  resets on reload is any state that was never written there in the first
+  place, which is the more common source of "it forgot everything," since
+  most screens have no persistence to begin with.
+- **Tabs don't stay in sync for free.** Two tabs open on the same screen each
+  read `localStorage` once, at mount, into their own React state — a write
+  in one tab does not update the other's in-memory state. The browser's
+  `storage` event fires in *other* tabs when a write happens (never the tab
+  that wrote it), so cross-tab sync has to be wired explicitly with a
+  `window.addEventListener('storage', ...)` listener that re-reads and calls
+  `setState`. Skip that listener and "tab memory" looks inconsistent — stale
+  in whichever tab you didn't touch last.
+- **Version the storage key**, e.g. `bs-messages-v13`, and bump the suffix
+  whenever the persisted shape changes. Data is only seeded from the fixture
+  when storage is empty, so a shape change with no key bump means old
+  persisted rows silently read new fields as `undefined` — the old Broadcast
+  Studio prototype's `useSharedMessages` hook does exactly this, and it's the
+  reference implementation for this whole pattern (seed-once, write-through
+  setter, `storage`-event listener, versioned key) if a screen needs it.
 
 ## Rules
 
