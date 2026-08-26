@@ -14,6 +14,25 @@
     <link rel="stylesheet" crossorigin href="/geoh-ux-kit/main/assets/index-Dt4TRs8I.css">
   </head>
   <body>
+    <script>
+      /*
+       * Unfolds the path that .github/pages-404.html folded into the query
+       * string, before React Router reads the location. No-op everywhere else,
+       * including local dev — nothing writes a `?/` query but that redirect.
+       */
+      ;(function () {
+        var search = window.location.search
+        if (search[1] !== '/') return
+        var decoded = search
+          .slice(1)
+          .split('&')
+          .map(function (part) {
+            return part.replace(/~and~/g, '&')
+          })
+          .join('?')
+        window.history.replaceState(null, null, window.location.pathname.slice(0, -1) + decoded + window.location.hash)
+      })()
+    </script>
     <div id="root"></div>
   </body>
 </html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='utf-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1' />
+    <title>GeoH UX Kit</title>
+    <script>
+      /*
+       * SPA fallback for the whole site.
+       *
+       * The prototypes use real paths (/broadcast-studio), which have no file
+       * behind them. GitHub Pages serves ONE 404 page for a project site — the
+       * one at the root — and ignores any 404.html sitting in a subdirectory,
+       * so this single file has to cover every deployment.
+       *
+       * It works out which prefix is the app's base, then bounces to that
+       * base with the rest of the path folded into the query string. The
+       * matching decoder in index.html unfolds it before React Router boots,
+       * so the address bar ends up showing the URL that was requested.
+       */
+      ;(function () {
+        var l = window.location
+        var segments = l.pathname.split('/').filter(Boolean)
+
+        // segments[0] is the repo. A branch deployment nests one level deeper:
+        //   /geoh-ux-kit/main/...           -> base is 2 segments
+        //   /geoh-ux-kit/feat/whatever/...  -> base is 3
+        var keep = segments[1] === 'feat' ? 3 : 2
+        var rest = segments.slice(keep).join('/')
+
+        // Nothing left over means the deployment itself is missing, not a
+        // route within one. Redirecting there would bounce back here forever.
+        if (!rest) return
+
+        var base = '/' + segments.slice(0, keep).join('/') + '/'
+        l.replace(
+          l.origin +
+            base +
+            '?/' +
+            rest.replace(/&/g, '~and~') +
+            (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        )
+      })()
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 48px 24px;
+        background: #f8f8f8;
+        color: #334d6e;
+        font-family: 'Montserrat', system-ui, sans-serif;
+        text-align: center;
+      }
+      h1 { font-size: 24px; color: #27496d; }
+      a { color: #2699fb; }
+    </style>
+  </head>
+  <body>
+    <h1>No prototype here</h1>
+    <p>That branch has not been deployed, or its branch was deleted.</p>
+    <p><a href='/geoh-ux-kit/'>See what is live</a></p>
+  </body>
+</html>
