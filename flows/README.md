@@ -176,9 +176,6 @@ Two things found while trying these against a local dev server:
   environment. Treat it as a workstation/local tool, not something to script
   headlessly.
 
-## Further reading
-
-The primary-source research behind the defaults and patterns above — the
-official Screencast API reference, the CLI's bundled recording guide, and
-the full command surface — is written up in the `work-portal` notes repo:
-`reports/2026-08-26-playwright-cli-screencast-research.md`.
+The defaults and patterns above are confirmed against Playwright's own API
+reference and its bundled CLI recording guide — check those directly
+(`playwright.dev`, or `playwright-cli --help`) for anything not covered here.

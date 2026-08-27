@@ -23,6 +23,24 @@ geoh's own layout source — not approximated:
 
 Your job is only ever the content of one screen.
 
+## Starting a feature
+
+Branch off `main` for every piece of work, named `feat/<short-name>`:
+
+```
+git switch -c feat/my-idea
+```
+
+`main` is only ever the harness — no screens, no flows, nothing that could
+merge-conflict between two people's work. Everything you build lives on your
+branch. Pushing it publishes a live URL immediately (see Branches and
+deployment below), so there's a shareable link the moment there's something
+to look at — no PR required just to get one.
+
+When the work is ready, merge `feat/<name>` back into `main` (PR or a direct
+merge, whichever this team is using) and push `main`. Deleting the branch
+afterward takes its live URL down with it.
+
 ## Adding a screen
 
 ```
